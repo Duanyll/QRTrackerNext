@@ -13,7 +13,7 @@ namespace QRTrackerNext
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
+            DependencyService.Register<RealmDataStore>();
             MainPage = new AppShell();
         }
 
