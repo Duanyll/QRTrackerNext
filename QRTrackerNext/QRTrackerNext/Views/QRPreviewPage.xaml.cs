@@ -43,5 +43,29 @@ namespace QRTrackerNext.Views
                 }
             }
         }
+
+        private async void btnScanQRCustom_Clicked(object sender, EventArgs e)
+        {
+            if (await CheckPermission())
+            {
+                var options = new ScanningOverlay.Options()
+                {
+                    ScanColor = Color.Green,
+                    ShowFlash = true
+                };
+                var overlay = new ScanningOverlay.Overlay(options);
+                var csPage = new ScanningOverlay.CustomScanPage(overlay);
+
+                csPage.OnScanResult = async (result) =>
+                {
+                    if (null != result)
+                    {
+                        await DisplayAlert("扫描结果", result.Text, "确定");
+                    }
+                };
+
+                await Shell.Current.Navigation.PushAsync(csPage);
+            }
+        }
     }
 }

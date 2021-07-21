@@ -6,6 +6,7 @@
     <ContentPage.Content>
         <StackLayout>
             <Button x:Name="btnScanQR" Text="使用默认界面扫描二维码" Clicked="btnScanQR_Clicked"></Button>
+            <Button x:Name="btnScanQRCustom" Text="使用自定义界面扫描二维码" Clicked="btnScanQRCustom_Clicked"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

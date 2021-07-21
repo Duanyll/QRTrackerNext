@@ -10,9 +10,9 @@ namespace QRTrackerNext.ViewModels
         public AboutViewModel()
         {
             Title = "About";
-            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://aka.ms/xamarin-quickstart"));
+            LoginCommand = new Command(async () => await Shell.Current.GoToAsync("//LoginPage"));
         }
 
-        public ICommand OpenWebCommand { get; }
+        public ICommand LoginCommand { get; }
     }
 }
