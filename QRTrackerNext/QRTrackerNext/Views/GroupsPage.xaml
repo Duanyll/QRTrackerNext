@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.GroupsPage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:Name="BrowseGroupsPage"
+             x:DataType="local:GroupsViewModel"
+             Appearing="BrowseGroupsPage_Appearing"
+             Disappearing="BrowseGroupsPage_Disappearing">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Command="{Binding AddGroupCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <RefreshView Command="{Binding LoadGroupsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="GroupsListView"
+                        ItemsSource="{Binding Groups}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Group">
+                    <SwipeView>
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItem Text="删除"
+                                    BackgroundColor="LightPink"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=RemoveGroupCommand}"		
+                                    CommandParameter="{Binding .}">
+                                </SwipeItem>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="重命名"
+                                    BackgroundColor="LightBlue"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=UpdateGroupCommand}"		
+                                    CommandParameter="{Binding .}">
+                                </SwipeItem>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <SwipeView.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                NumberOfTapsRequired="1"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=GroupTapped}"		
+                                CommandParameter="{Binding .}">
+                            </TapGestureRecognizer>
+                        </SwipeView.GestureRecognizers>
+                        <StackLayout Padding="10">
+                            <Label Text="{Binding Name}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" />
+                            <Label Text="{Binding Id}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="13" />
+                        </StackLayout>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

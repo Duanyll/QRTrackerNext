@@ -11,8 +11,6 @@ namespace QRTrackerNext.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public Realm realm = Realm.GetInstance();
-
         bool isBusy = false;
         public bool IsBusy
         {

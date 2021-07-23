@@ -11,6 +11,8 @@ namespace QRTrackerNext
         public AppShell()
         {
             InitializeComponent();
+
+            Routing.RegisterRoute(nameof(StudentsPage), typeof(StudentsPage));
         }
 
     }

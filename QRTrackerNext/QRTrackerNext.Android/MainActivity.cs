@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.OS;
 using ZXing.Mobile;
 using Plugin.CurrentActivity;
+using Acr.UserDialogs;
 
 namespace QRTrackerNext.Droid
 {
@@ -24,6 +25,7 @@ namespace QRTrackerNext.Droid
 
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             MobileBarcodeScanner.Initialize(Application);
+            UserDialogs.Init(this);
 
             LoadApplication(new App());
         }
