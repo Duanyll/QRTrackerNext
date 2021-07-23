@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
+using Realms;
 
 namespace QRTrackerNext.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public Realm realm = Realm.GetInstance();
 
         bool isBusy = false;
         public bool IsBusy

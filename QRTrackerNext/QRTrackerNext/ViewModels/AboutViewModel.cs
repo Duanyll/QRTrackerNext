@@ -9,10 +9,10 @@ namespace QRTrackerNext.ViewModels
     {
         public AboutViewModel()
         {
-            Title = "About";
-            LoginCommand = new Command(async () => await Shell.Current.GoToAsync("//LoginPage"));
+            Title = "关于";
+            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://qrt.duanyll.com"));
         }
 
-        public ICommand LoginCommand { get; }
+        public ICommand OpenWebCommand { get; }
     }
 }

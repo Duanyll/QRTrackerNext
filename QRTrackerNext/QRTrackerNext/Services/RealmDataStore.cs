@@ -7,7 +7,7 @@ using Realms;
 
 namespace QRTrackerNext.Services
 {
-    class RealmDataStore : IDataStore<Item>
+    class RealmDataStore<T> : IDataStore<T> where T : RealmObject
     {
         Realm realm;
 
@@ -16,13 +16,13 @@ namespace QRTrackerNext.Services
             realm = Realm.GetInstance();
         }
 
-        public async Task<bool> AddItemAsync(Item item)
+        public async Task<bool> AddItemAsync(T item)
         {
             realm.Write(() => realm.Add(item));
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateItemAsync(Item item)
+        public async Task<bool> UpdateItemAsync(T item)
         {
             realm.Write(() => realm.Add(item));
             return await Task.FromResult(true);
@@ -32,20 +32,20 @@ namespace QRTrackerNext.Services
         {
             realm.Write(() =>
             {
-                var item = realm.Find<Item>(id);
+                var item = realm.Find<T>(id);
                 realm.Remove(item);
             });
             return await Task.FromResult(true);
         }
 
-        public async Task<Item> GetItemAsync(string id)
+        public async Task<T> GetItemAsync(string id)
         {
-            return await Task.FromResult(realm.Find<Item>(id));
+            return await Task.FromResult(realm.Find<T>(id));
         }
 
-        public async Task<IEnumerable<Item>> GetItemsAsync(bool forceRefresh = false)
+        public async Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false)
         {
-            return await Task.FromResult(realm.All<Item>());
+            return await Task.FromResult(realm.All<T>());
         }
     }
 }
