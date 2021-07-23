@@ -177,10 +177,10 @@ namespace QRTrackerNext.ViewModels
             realmToken.Dispose();
         }
 
-        void OnStudentSelected(Student student)
+        async void OnStudentSelected(Student student)
         {
             if (student == null) return;
-            Debug.WriteLine($"Open {student}");
+            await Shell.Current.GoToAsync($"{nameof(StudentDetailPage)}?studentId={student.Id}");
         }
     }
 }

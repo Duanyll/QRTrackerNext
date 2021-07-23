@@ -93,6 +93,10 @@ namespace QRTrackerNext.ViewModels
                 if (result)
                     realm.Write(() =>
                     {
+                        foreach (var i in group.Students)
+                        {
+                            realm.Remove(i);
+                        }
                         realm.Remove(group);
                     });
             });

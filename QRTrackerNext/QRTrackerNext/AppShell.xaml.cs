@@ -13,6 +13,7 @@ namespace QRTrackerNext
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(StudentsPage), typeof(StudentsPage));
+            Routing.RegisterRoute(nameof(StudentDetailPage), typeof(StudentDetailPage));
         }
 
     }

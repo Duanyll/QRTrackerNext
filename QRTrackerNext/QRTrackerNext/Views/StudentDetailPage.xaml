@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zx="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+             xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable"
+             x:Class="QRTrackerNext.Views.StudentDetailPage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:StudentDetailViewModel"
+             Shell.TabBarIsVisible="False">
+    <ContentPage.Content>
+        <StackLayout>
+            <zx:ZXingBarcodeImageView
+                    BarcodeFormat="QR_CODE"
+                    BarcodeValue="{Binding Uri}"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand">
+                <zx:ZXingBarcodeImageView.BarcodeOptions>
+                    <zxcm:EncodingOptions Width="500" Height="500" />
+                </zx:ZXingBarcodeImageView.BarcodeOptions>
+            </zx:ZXingBarcodeImageView>
+            <zx:ZXingBarcodeImageView
+                    BarcodeFormat="PDF_417"
+                    BarcodeValue="{Binding UriShort}"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand">
+                <zx:ZXingBarcodeImageView.BarcodeOptions>
+                    <zxcm:EncodingOptions Width="500" Height="300" />
+                </zx:ZXingBarcodeImageView.BarcodeOptions>
+            </zx:ZXingBarcodeImageView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
