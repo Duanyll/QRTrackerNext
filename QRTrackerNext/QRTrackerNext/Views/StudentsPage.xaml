@@ -12,6 +12,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding AddStudentCommand}"></ToolbarItem>
         <ToolbarItem Text="Import" Command="{Binding ImportStudentCommand}"></ToolbarItem>
+        <ToolbarItem Text="Qr" Command="{Binding ShowGroupQrCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <RefreshView Command="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
         <CollectionView x:Name="StudentsListView"

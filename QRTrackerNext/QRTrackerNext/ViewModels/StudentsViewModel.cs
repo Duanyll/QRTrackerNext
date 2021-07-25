@@ -37,6 +37,8 @@ namespace QRTrackerNext.ViewModels
         public Command<Student> RemoveStudentCommand { get; }
         public Command<Student> StudentTapped { get; }
 
+        public Command ShowGroupQrCommand { get; }
+
         private Realm realm;
         protected Group group;
 
@@ -155,6 +157,10 @@ namespace QRTrackerNext.ViewModels
                     });
             });
             StudentTapped = new Command<Student>(OnStudentSelected);
+            ShowGroupQrCommand = new Command(async () =>
+            {
+                await Shell.Current.GoToAsync($"{nameof(GroupQrPage)}?groupId={groupId}");
+            });
         }
 
         private IDisposable realmToken;

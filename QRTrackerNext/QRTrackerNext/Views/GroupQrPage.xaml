@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.GroupQrPage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:GroupQrViewModel">
+    <RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" IsEnabled="False">
+        <StackLayout>
+            <Label>
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="列数 "/>
+                            <Span Text="{Binding WidthCount}" FontAttributes="Bold"/>
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Slider Value="{Binding WidthCount, Mode=TwoWay}" Maximum="10" Minimum="1"></Slider>
+            <Label>
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="行数 "/>
+                            <Span Text="{Binding HeightCount}" FontAttributes="Bold"/>
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Slider Value="{Binding HeightCount, Mode=TwoWay}" Maximum="10" Minimum="1"></Slider>
+
+            <Button Text="生成" Command="{Binding GeneratePicCommand}"></Button>
+            <Button Text="保存" Command="{Binding SavePicCommand}"></Button>
+            <CollectionView ItemsSource="{Binding Images}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="StreamImageSource">
+                        <Image Source="{Binding .}"></Image>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </RefreshView>
+</ContentPage>
