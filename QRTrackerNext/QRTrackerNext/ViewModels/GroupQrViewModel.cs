@@ -9,7 +9,6 @@ using MongoDB.Bson;
 using Acr.UserDialogs;
 
 using Xamarin.Forms;
-//using Xamarin.Essentials;
 
 using QRTrackerNext.Models;
 using QRTrackerNext.Views;
@@ -41,13 +40,24 @@ namespace QRTrackerNext.ViewModels
             }
         }
 
-        bool canSavePic = false;
-        public bool CanSavePic
+        public new bool IsBusy
         {
-            get => canSavePic;
+            get => base.IsBusy;
             set
             {
-                SetProperty(ref canSavePic, value);
+                base.IsBusy = value;
+                GeneratePicCommand.ChangeCanExecute();
+                SavePicCommand.ChangeCanExecute();
+            }
+        }
+
+        bool usePDF417 = false;
+        public bool UsePDF417
+        {
+            get => usePDF417;
+            set
+            {
+                SetProperty(ref usePDF417, value);
             }
         }
 
@@ -74,7 +84,7 @@ namespace QRTrackerNext.ViewModels
         {
             Images = new ObservableCollection<ImageSource>();
 
-            GeneratePicCommand = new Command(() =>
+            GeneratePicCommand = new Command(async () =>
             {
                 var realm = Realm.GetInstance();
                 var group = realm.Find<Group>(ObjectId.Parse(groupId));
@@ -83,30 +93,29 @@ namespace QRTrackerNext.ViewModels
                 {
                     stuList.Add((i.Id.ToString(), i.Name));
                 }
-                Task.Run(() =>
+                IsBusy = true;
+                await Task.Run(() =>
                 {
-                    IsBusy = true;
-                    canSavePic = false;
-                    var skbitmaps = QRHelper.GetClassQrCodePic(stuList, WidthCount, HeightCount);
+                    var skbitmaps = UsePDF417 ?
+                        QRHelper.GetClassPDF417CodePic(stuList, WidthCount, HeightCount)
+                        : QRHelper.GetClassQrCodePic(stuList, WidthCount, HeightCount);
                     bitmaps = skbitmaps;
                     Images.Clear();
                     foreach (var i in skbitmaps)
                     {
                         Images.Add(ImageSource.FromStream(() => i.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream()));
                     }
-                    IsBusy = false;
-                    canSavePic = true;
                 });
-            });
+                IsBusy = false;
+            }, () => !IsBusy);
 
             SavePicCommand = new Command(async () =>
             {
                 if (bitmaps?.Count > 0 && await CheckPermission())
                 {
+                    IsBusy = true;
                     await Task.Run(() =>
                     {
-                        canSavePic = false;
-
                         var realm = Realm.GetInstance();
                         var group = realm.Find<Group>(ObjectId.Parse(groupId));
                         var store = DependencyService.Get<IMediaStore>();
@@ -114,11 +123,10 @@ namespace QRTrackerNext.ViewModels
                         {
                             store.SaveImageFromStream(bitmaps[i].Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream(), $"{group.Name}-{i + 1}.png");
                         }
-
-                        canSavePic = true;
                     });
+                    IsBusy = false;
                 }
-            });
+            }, () => !IsBusy && bitmaps?.Count > 0);
         }
     }
 }

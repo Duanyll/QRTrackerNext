@@ -2,44 +2,61 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QRTrackerNext.Views.GroupQrPage"
-             Title="{Binding Title}"
+             Title="班级二维码生成"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
              x:DataType="local:GroupQrViewModel">
     <RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" IsEnabled="False">
-        <StackLayout>
-            <Label>
-                <Label.FormattedText>
-                    <FormattedString>
-                        <FormattedString.Spans>
-                            <Span Text="列数 "/>
-                            <Span Text="{Binding WidthCount}" FontAttributes="Bold"/>
-                        </FormattedString.Spans>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <Slider Value="{Binding WidthCount, Mode=TwoWay}" Maximum="10" Minimum="1"></Slider>
-            <Label>
-                <Label.FormattedText>
-                    <FormattedString>
-                        <FormattedString.Spans>
-                            <Span Text="行数 "/>
-                            <Span Text="{Binding HeightCount}" FontAttributes="Bold"/>
-                        </FormattedString.Spans>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <Slider Value="{Binding HeightCount, Mode=TwoWay}" Maximum="10" Minimum="1"></Slider>
-
-            <Button Text="生成" Command="{Binding GeneratePicCommand}"></Button>
-            <Button Text="保存" Command="{Binding SavePicCommand}"></Button>
-            <CollectionView ItemsSource="{Binding Images}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="StreamImageSource">
+        <StackLayout Padding="10">
+            <Grid HeightRequest="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0"  Grid.Column="0" VerticalOptions="CenterAndExpand">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="列数 "/>
+                                <Span Text="{Binding WidthCount}" FontAttributes="Bold"/>
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Slider Grid.Row="0" Grid.Column="1" Value="{Binding WidthCount, Mode=TwoWay}" Maximum="10" Minimum="1" 
+                        MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="LightGray"></Slider>
+                <Label Grid.Row="1" Grid.Column="0" VerticalOptions="CenterAndExpand">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="行数 "/>
+                                <Span Text="{Binding HeightCount}" FontAttributes="Bold"/>
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Slider Grid.Row="1" Grid.Column="1" Value="{Binding HeightCount, Mode=TwoWay}" Maximum="10" Minimum="1"
+                        MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="LightGray"></Slider>
+            </Grid>
+            <Grid HeightRequest="75">
+                <Grid.ColumnDefinitions>      
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label VerticalOptions="CenterAndExpand" Grid.Column="0" Text="使用 PDF417"></Label>
+                <Switch Grid.Column="1" IsToggled="{Binding UsePDF417}"></Switch>
+                <Button Grid.Column="2" Text="生成" Command="{Binding GeneratePicCommand}"></Button>
+                <Button Grid.Column="3" Text="保存" Command="{Binding SavePicCommand}"></Button>
+            </Grid>
+            <CarouselView ItemsSource="{Binding Images}">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate x:DataType="StreamImageSource">  
                         <Image Source="{Binding .}"></Image>
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
         </StackLayout>
     </RefreshView>
 </ContentPage>

@@ -104,5 +104,72 @@ namespace QRTrackerNext.Models
 
             return res;
         }
+
+        const int PDF417_WIDTH = 300;
+        const int PDF417_HEIGHT = 100;
+        const int PDF417_TEXT_SIZE = 36;
+        const int PDF417_PADDING = 40;
+
+        public static List<SKBitmap> GetClassPDF417CodePic(List<(string Id, string Name)> stuList, int w, int h)
+        {
+            int cur = 0;
+            List<SKBitmap> res = new List<SKBitmap>();
+            if (w <= 0 || h <= 0) return res;
+            using (SKPaint textPaint = new SKPaint() { TextSize = PDF417_TEXT_SIZE, Typeface = SKFontManager.Default.MatchCharacter('汉') })
+            {
+                SKRect bounds = new SKRect();
+                textPaint.MeasureText("测试文字", ref bounds);
+                int bitmapWidth = PDF417_PADDING * (w + 1) + PDF417_WIDTH * w;
+                int bitmapHeight = PDF417_PADDING * (h + 1) + (PDF417_HEIGHT + (int)bounds.Height) * h;
+
+                var writer = new BarcodeWriter<SKBitmap>()
+                {
+                    Format = BarcodeFormat.PDF_417,
+                    Options = new ZXing.Common.EncodingOptions()
+                    {
+                        Height = PDF417_HEIGHT,
+                        Width = PDF417_WIDTH,
+                        Margin = 0
+                    },
+                    Renderer = new Utils.SKBitmapRenderer()
+                };
+                while (cur < stuList.Count)
+                {
+                    SKBitmap bitmap = new SKBitmap(bitmapWidth, bitmapHeight);
+                    bitmap.Erase(new SKColor(0xFF, 0xFF, 0xFF));
+                    using (SKCanvas canvas = new SKCanvas(bitmap))
+                    {
+                        for (int i = 0; i < h; i++)
+                        {
+                            for (int j = 0; j < w; j++)
+                            {
+                                if (cur >= stuList.Count)
+                                {
+                                    goto END;
+                                }
+                                try
+                                {
+                                    var student = stuList[cur++];
+                                    var qrBitmap = writer.Write($"qrt://stu?id={student.Id}");
+
+                                    var offsetTop = PDF417_PADDING * (i + 1) + (PDF417_HEIGHT + (int)bounds.Height) * i;
+                                    var offsetLeft = PDF417_PADDING * (j + 1) + PDF417_WIDTH * j;
+                                    canvas.DrawBitmap(qrBitmap, new SKPoint() { X = offsetLeft, Y = offsetTop });
+                                    canvas.DrawText(student.Name, new SKPoint() { X = offsetLeft, Y = offsetTop + PDF417_HEIGHT + (int)bounds.Height }, textPaint);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                    }
+                END:
+                    res.Add(bitmap);
+                }
+            }
+
+            return res;
+        }
     }
 }

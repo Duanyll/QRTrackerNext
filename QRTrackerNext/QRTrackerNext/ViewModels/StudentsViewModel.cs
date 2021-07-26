@@ -69,7 +69,7 @@ namespace QRTrackerNext.ViewModels
                         return;
                     }
                     Students.Clear();
-                    var studentsQuery = group.Students;
+                    var studentsQuery = group.Students.OrderBy(i => i.Name);
                     foreach (var i in studentsQuery)
                     {
                         Students.Add(i);
@@ -166,7 +166,6 @@ namespace QRTrackerNext.ViewModels
         private IDisposable realmToken;
         public void OnAppearing()
         {
-            IsBusy = true;
             selectedStudent = null;
             realmToken = group.Students.SubscribeForNotifications((sender, changes, error) =>
             {

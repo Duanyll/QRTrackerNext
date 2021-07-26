@@ -4,7 +4,7 @@
              x:Class="QRTrackerNext.Views.QRPreviewPage"
              Title="二维码扫描预览">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Padding="10">
             <Button x:Name="btnScanQR" Text="使用默认界面扫描二维码" Clicked="btnScanQR_Clicked"></Button>
             <Button x:Name="btnScanQRCustom" Text="使用自定义界面扫描二维码" Clicked="btnScanQRCustom_Clicked"></Button>
         </StackLayout>

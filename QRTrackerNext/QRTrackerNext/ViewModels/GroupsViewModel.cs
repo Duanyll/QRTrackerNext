@@ -46,7 +46,7 @@ namespace QRTrackerNext.ViewModels
                 try
                 {
                     Groups.Clear();
-                    var groupsQuery = realm.All<Group>();
+                    var groupsQuery = realm.All<Group>().OrderBy(i => i.Name);
                     foreach (var i in groupsQuery)
                     {
                         Groups.Add(i);
@@ -108,7 +108,6 @@ namespace QRTrackerNext.ViewModels
         private IDisposable realmToken;
         public void OnAppearing()
         {
-            IsBusy = true;
             selectedGroup = null;
             realmToken = realm.All<Group>().SubscribeForNotifications((sender, changes, error) =>
             {

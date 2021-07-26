@@ -14,52 +14,25 @@
         <ToolbarItem Text="Import" Command="{Binding ImportStudentCommand}"></ToolbarItem>
         <ToolbarItem Text="Qr" Command="{Binding ShowGroupQrCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <RefreshView Command="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-        <CollectionView x:Name="StudentsListView"
-                        ItemsSource="{Binding Students}"
-                        SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Student">
-                    <SwipeView>
-                        <SwipeView.LeftItems>
-                            <SwipeItems>
-                                <SwipeItem Text="删除"
-                                    BackgroundColor="LightPink"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:StudentsViewModel}}, Path=RemoveStudentCommand}"		
-                                    CommandParameter="{Binding .}">
-                                </SwipeItem>
-                            </SwipeItems>
-                        </SwipeView.LeftItems>
-                        <SwipeView.RightItems>
-                            <SwipeItems>
-                                <SwipeItem Text="重命名"
-                                    BackgroundColor="LightBlue"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:StudentsViewModel}}, Path=UpdateStudentCommand}"		
-                                    CommandParameter="{Binding .}">
-                                </SwipeItem>
-                            </SwipeItems>
-                        </SwipeView.RightItems>
-                        <SwipeView.GestureRecognizers>
-                            <TapGestureRecognizer 
-                                    NumberOfTapsRequired="1"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:StudentsViewModel}}, Path=StudentTapped}"		
-                                    CommandParameter="{Binding .}">
-                            </TapGestureRecognizer>
-                        </SwipeView.GestureRecognizers>
-                        <StackLayout Padding="10">
-                            <Label Text="{Binding Name}" 
-                            LineBreakMode="NoWrap" 
-                            Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
-                            <Label Text="{Binding Id}" 
-                            LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="13" />
-                        </StackLayout>
-                    </SwipeView>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+    <ListView ItemsSource="{Binding Students}" RefreshCommand="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="model:Student">
+                <TextCell Text="{Binding Name}" Detail="{Binding Id}" 
+                          Command="{Binding Source={RelativeSource AncestorType={x:Type local:StudentsViewModel}}, Path=StudentTapped}"
+                          CommandParameter="{Binding .}">
+                    <TextCell.ContextActions>
+                        <MenuItem Text="删除" IsDestructive="True"
+                                  Command="{Binding BindingContext.RemoveStudentCommand, Source={x:Reference BrowseStudentsPage}}"
+                                  CommandParameter="{Binding .}">
+                        </MenuItem>
+                        <MenuItem Text="重命名"
+                                  Command="{Binding BindingContext.UpdateStudentCommand, Source={x:Reference BrowseStudentsPage}}"
+                                  CommandParameter="{Binding .}">
+                        </MenuItem>
+                    </TextCell.ContextActions>
+                </TextCell>
 
-        </CollectionView>
-    </RefreshView>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </ContentPage>

@@ -72,7 +72,8 @@ namespace QRTrackerNext.Views.ScanningOverlay
 
         protected override void OnDisappearing()
         {
-            zxing.IsScanning = false;
+            // Seems to be a zxing bug.
+            //zxing.IsScanning = false;
 
             base.OnDisappearing();
 
