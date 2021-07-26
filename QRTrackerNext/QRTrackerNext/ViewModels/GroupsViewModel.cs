@@ -63,7 +63,7 @@ namespace QRTrackerNext.ViewModels
             });
             AddGroupCommand = new Command(async () =>
             {
-                var result = await UserDialogs.Instance.PromptAsync("请输入新建班级名称");
+                var result = await UserDialogs.Instance.PromptAsync("请输入新建班级名称", "新建班级");
                 if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
                 {
                     realm.Write(() =>
@@ -78,7 +78,7 @@ namespace QRTrackerNext.ViewModels
             });
             UpdateGroupCommand = new Command<Group>(async (group) =>
             {
-                var result = await UserDialogs.Instance.PromptAsync($"将 {group.Name} 重命名为");
+                var result = await UserDialogs.Instance.PromptAsync($"将 {group.Name} 重命名为", "重命名班级");
                 if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
                 {
                     realm.Write(() =>
@@ -89,8 +89,13 @@ namespace QRTrackerNext.ViewModels
             });
             RemoveGroupCommand = new Command<Group>(async (group) =>
             {
-                var result = await UserDialogs.Instance.ConfirmAsync($"确定要删除 {group.Name} 吗");
+                var result = await UserDialogs.Instance.ConfirmAsync($"确定要删除 {group.Name} 吗", "删除班级");
                 if (result)
+                {
+                    if (realm.All<Homework>().Any(i => i.Groups.Contains(group))) 
+                    {
+                        await UserDialogs.Instance.AlertAsync($"不能删除 {group.Name}, 因为还有布置给该班级的作业。请先删除这些作业。", "删除失败");
+                    }
                     realm.Write(() =>
                     {
                         foreach (var i in group.Students)
@@ -99,6 +104,7 @@ namespace QRTrackerNext.ViewModels
                         }
                         realm.Remove(group);
                     });
+                }
             });
             GroupTapped = new Command<Group>(OnGroupSelected);
 

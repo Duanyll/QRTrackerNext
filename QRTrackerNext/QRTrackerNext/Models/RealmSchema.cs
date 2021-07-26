@@ -35,7 +35,7 @@ namespace QRTrackerNext.Models
     class ScanLog : RealmObject
     {
         public Student student { get; set; }
-        public DateTimeOffset time { get; set; } = DateTime.Now;
+        public DateTimeOffset time { get; set; } = DateTimeOffset.Now;
     }
 
     class Homework : RealmObject

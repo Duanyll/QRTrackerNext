@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.NewHomeworkPage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:NewHomeworkViewModel">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="创建" Command="{Binding CreateNewHomeworkCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout Spacing="3" Padding="15">
+            <Label Text="名称" VerticalTextAlignment="Center"></Label>
+            <Entry Text="{Binding Name}"></Entry>
+
+            <ListView ItemsSource="{Binding Groups}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:SelectableGroup">
+                        <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}" OnChanged="SwitchCell_OnChanged"></SwitchCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+            
+                    
+                    
+    </ContentPage.Content>
+</ContentPage>

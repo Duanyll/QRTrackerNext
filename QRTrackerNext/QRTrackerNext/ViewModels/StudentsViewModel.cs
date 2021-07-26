@@ -86,7 +86,7 @@ namespace QRTrackerNext.ViewModels
             });
             AddStudentCommand = new Command(async () =>
             {
-                var result = await UserDialogs.Instance.PromptAsync("请输入新建学生名称");
+                var result = await UserDialogs.Instance.PromptAsync("请输入新建学生名称", "新建学生");
                 if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
                 {
                     realm.Write(() =>
@@ -113,7 +113,7 @@ namespace QRTrackerNext.ViewModels
                             names.Add(i);
                         }
                     }
-                    var result = await UserDialogs.Instance.ConfirmAsync($"要导入 ${names.Count} 个学生吗");
+                    var result = await UserDialogs.Instance.ConfirmAsync($"要导入 ${names.Count} 个学生吗", "导入学生");
                     if (result)
                     {
                         realm.Write(() =>
@@ -129,15 +129,12 @@ namespace QRTrackerNext.ViewModels
                 }
                 else
                 {
-                    await UserDialogs.Instance.AlertAsync("请将学生名单复制到剪贴板中, 每行一个姓名");
+                    await UserDialogs.Instance.AlertAsync("请将学生名单复制到剪贴板中, 每行一个姓名", "导入说明");
                 }
-            })
-            {
-
-            };
+            });
             UpdateStudentCommand = new Command<Student>(async (student) =>
             {
-                var result = await UserDialogs.Instance.PromptAsync($"将 {student.Name} 重命名为");
+                var result = await UserDialogs.Instance.PromptAsync($"将 {student.Name} 重命名为", "重命名学生");
                 if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
                 {
                     realm.Write(() =>
@@ -148,11 +145,12 @@ namespace QRTrackerNext.ViewModels
             });
             RemoveStudentCommand = new Command<Student>(async (student) =>
             {
-                var result = await UserDialogs.Instance.ConfirmAsync($"确定要删除 {student.Name} 吗");
+                var result = await UserDialogs.Instance.ConfirmAsync($"这将同时删除 {student.Name} 的所有作业记录。确定要删除 {student.Name} 吗", "删除学生");
                 if (result)
                     realm.Write(() =>
                     {
-                        group.Students.Remove(student);
+                        var scanLogs = realm.All<ScanLog>().Where(i => i.student == student);
+                        realm.RemoveRange(scanLogs);
                         realm.Remove(student);
                     });
             });
