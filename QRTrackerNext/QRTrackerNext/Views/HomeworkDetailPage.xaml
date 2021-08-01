@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.HomeworkDetailPage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:HomeworkDetailViewModel"
+             Appearing="ContentPage_Appearing">
+    <ContentPage.Content>
+        <RefreshView Command="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy}">
+            <TableView HasUnevenRows="True" Intent="Data">
+                <TableView.Root>
+                    <TableSection Title="总览">
+                        <TextCell Text="{Binding Homework.CreationTime.LocalDateTime, StringFormat='创建时间 {0:f}'}"></TextCell>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Homework.Groups}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="model:Group">
+                                            <Frame BackgroundColor="LightGray" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
+                                                <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="登记情况">
+                        <TextCell Text="{Binding StudentsSubmitted.Count, StringFormat='{0} 人已登记'}"></TextCell>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding StudentsSubmitted}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="model:Student">
+                                            <Frame BackgroundColor="LightGray" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
+                                                <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+
+                        <TextCell Text="{Binding StudentsNotSubmitted.Count, StringFormat='{0} 人未登记'}"></TextCell>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding StudentsNotSubmitted}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="model:Student">
+                                            <Frame BackgroundColor="LightGray" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
+                                                <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </TableSection>
+                </TableView.Root>
+            </TableView>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>

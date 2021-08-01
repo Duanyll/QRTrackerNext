@@ -92,9 +92,10 @@ namespace QRTrackerNext.ViewModels
                 var result = await UserDialogs.Instance.ConfirmAsync($"确定要删除 {group.Name} 吗", "删除班级");
                 if (result)
                 {
-                    if (realm.All<Homework>().Any(i => i.Groups.Contains(group))) 
+                    if (group.Homeworks.Count() > 0) 
                     {
                         await UserDialogs.Instance.AlertAsync($"不能删除 {group.Name}, 因为还有布置给该班级的作业。请先删除这些作业。", "删除失败");
+                        return;
                     }
                     realm.Write(() =>
                     {

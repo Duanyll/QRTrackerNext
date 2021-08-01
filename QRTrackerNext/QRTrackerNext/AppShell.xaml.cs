@@ -16,6 +16,7 @@ namespace QRTrackerNext
             Routing.RegisterRoute(nameof(StudentDetailPage), typeof(StudentDetailPage));
             Routing.RegisterRoute(nameof(GroupQrPage), typeof(GroupQrPage));
             Routing.RegisterRoute(nameof(NewHomeworkPage), typeof(NewHomeworkPage));
+            Routing.RegisterRoute(nameof(HomeworkDetailPage), typeof(HomeworkDetailPage));
         }
 
     }

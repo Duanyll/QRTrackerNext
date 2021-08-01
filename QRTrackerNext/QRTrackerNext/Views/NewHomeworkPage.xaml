@@ -10,18 +10,26 @@
         <ToolbarItem Text="创建" Command="{Binding CreateNewHomeworkCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout Spacing="3" Padding="15">
-            <Label Text="名称" VerticalTextAlignment="Center"></Label>
-            <Entry Text="{Binding Name}"></Entry>
-
-            <ListView ItemsSource="{Binding Groups}" SelectionMode="None">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:SelectableGroup">
-                        <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}" OnChanged="SwitchCell_OnChanged"></SwitchCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackLayout>
+        <TableView HasUnevenRows="True" Intent="Form" VerticalOptions="FillAndExpand">
+            <TableView.Root>
+                <TableSection>
+                    <EntryCell Label="作业名称" Text="{Binding Name}"></EntryCell>
+                </TableSection>
+                <TableSection Title="包含班级">
+                    <ViewCell>
+                        <ViewCell.View>
+                            <ListView ItemsSource="{Binding Groups}" SelectionMode="None" RowHeight="45" VerticalScrollBarVisibility="Never">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="local:SelectableGroup">
+                                        <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}" OnChanged="SwitchCell_OnChanged"></SwitchCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </ViewCell.View>
+                    </ViewCell>
+                </TableSection>
+            </TableView.Root>
+        </TableView>
             
                     
                     

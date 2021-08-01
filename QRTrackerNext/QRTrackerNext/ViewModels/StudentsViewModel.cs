@@ -57,8 +57,13 @@ namespace QRTrackerNext.ViewModels
             GroupId = groupId;
             realm = Realm.GetInstance();
             group = realm.Find<Group>(ObjectId.Parse(groupId));
-            Title = group?.Name ?? "班级未找到";
             Students = new ObservableCollection<Student>();
+            if (group == null)
+            {
+                Title = "班级未找到";
+                return;
+            }
+            Title = group.Name;
             LoadStudentsCommand = new Command(() =>
             {
                 IsBusy = true;
@@ -165,7 +170,7 @@ namespace QRTrackerNext.ViewModels
         public void OnAppearing()
         {
             selectedStudent = null;
-            realmToken = group.Students.SubscribeForNotifications((sender, changes, error) =>
+            realmToken = group?.Students.SubscribeForNotifications((sender, changes, error) =>
             {
                 if (error != null)
                 {
@@ -177,7 +182,7 @@ namespace QRTrackerNext.ViewModels
 
         public void OnDisappearing()
         {
-            realmToken.Dispose();
+            realmToken?.Dispose();
         }
 
         async void OnStudentSelected(Student student)

@@ -46,7 +46,7 @@ namespace QRTrackerNext.ViewModels
                 try
                 {
                     Homeworks.Clear();
-                    var homeworksQuery = realm.All<Homework>().OrderBy(i => i.CreationTime);
+                    var homeworksQuery = realm.All<Homework>().OrderByDescending(i => i.CreationTime);
                     foreach (var i in homeworksQuery)
                     {
                         Homeworks.Add(i);
@@ -103,7 +103,7 @@ namespace QRTrackerNext.ViewModels
         async void OnHomeworkSelected(Homework homework)
         {
             if (homework == null) return;
-            //await Shell.Current.GoToAsync($"{nameof(StudentsPage)}?homeworkId={homework.Id}");
+            await Shell.Current.GoToAsync($"{nameof(HomeworkDetailPage)}?homeworkId={homework.Id}");
         }
     }
 }

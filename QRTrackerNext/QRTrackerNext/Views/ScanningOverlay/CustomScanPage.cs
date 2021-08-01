@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 using Xamarin.Forms;
 using ZXing.Net.Mobile.Forms;
@@ -13,9 +14,29 @@ namespace QRTrackerNext.Views.ScanningOverlay
         private ZXingScannerView zxing;
         private Overlay overlay;
 
+        private Label label;
+        private Frame frame;
+
+        public string LabelText {
+            get => label.Text;
+            set => label.Text = value;
+        }
+
+        string lastResult = "";
+
         public CustomScanPage(Overlay overlay = null) : base()
         {
             this.overlay = overlay ?? new Overlay();
+            label = new Label() { Text = "请扫描学生二维码" };
+            frame = new Frame()
+            {
+                Content = label,
+                BackgroundColor = Color.Accent,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.End,
+                Margin = 10,
+                CornerRadius = 10
+            };
 
             Title = "扫一扫";
 
@@ -28,14 +49,17 @@ namespace QRTrackerNext.Views.ScanningOverlay
 
             // 返回结果
             zxing.OnScanResult += (result) =>
-                Device.BeginInvokeOnMainThread(async () =>
+            {
+                if (result?.Text != lastResult)
                 {
-                    zxing.IsAnalyzing = false;
-
-                    await Shell.Current.GoToAsync("..");
-
-                    OnScanResult?.Invoke(result);
-                });
+                    lastResult = result.Text;
+                    Debug.WriteLine(result.Text);
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        OnScanResult?.Invoke(result);
+                    });
+                }
+            };
 
             // 闪光灯
             this.overlay.Options.FlashTappedAction = () =>
@@ -47,10 +71,13 @@ namespace QRTrackerNext.Views.ScanningOverlay
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children =
+                {
+                    zxing,
+                    this.overlay,
+                    frame
+                }
             };
-
-            grid.Children.Add(zxing);
-            grid.Children.Add(this.overlay);
 
             Content = grid;
         }

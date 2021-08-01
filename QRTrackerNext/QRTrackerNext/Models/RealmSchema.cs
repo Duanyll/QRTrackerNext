@@ -30,6 +30,9 @@ namespace QRTrackerNext.Models
         public string Name { get; set; }
 
         public IList<Student> Students { get; }
+
+        [Backlink(nameof(Homework.Groups))]
+        public IQueryable<Homework> Homeworks { get; }
     }
 
     class ScanLog : RealmObject
