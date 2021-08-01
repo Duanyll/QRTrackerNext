@@ -24,9 +24,9 @@ namespace QRTrackerNext.Views.ScanningOverlay
 
         string lastResult = "";
 
-        public CustomScanPage(Overlay overlay = null) : base()
+        public CustomScanPage() : base()
         {
-            this.overlay = overlay ?? new Overlay();
+            overlay = new Overlay();
             label = new Label() { Text = "请扫描学生二维码" };
             frame = new Frame()
             {
@@ -62,7 +62,7 @@ namespace QRTrackerNext.Views.ScanningOverlay
             };
 
             // 闪光灯
-            this.overlay.Options.FlashTappedAction = () =>
+            overlay.Options.FlashTappedAction = () =>
             {
                 zxing.IsTorchOn = !zxing.IsTorchOn;
             };
@@ -74,7 +74,7 @@ namespace QRTrackerNext.Views.ScanningOverlay
                 Children =
                 {
                     zxing,
-                    this.overlay,
+                    overlay,
                     frame
                 }
             };

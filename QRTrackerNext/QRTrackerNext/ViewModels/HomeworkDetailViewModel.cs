@@ -28,7 +28,8 @@ namespace QRTrackerNext.ViewModels
         }
 
         int studentCount = 0;
-        public int StudentCount {
+        public int StudentCount
+        {
             get => studentCount;
             set
             {
@@ -40,6 +41,8 @@ namespace QRTrackerNext.ViewModels
         public ObservableCollection<Student> StudentsNotSubmitted { get; }
 
         public Command LoadStudentsCommand { get; }
+
+        public Command GoScanCommand { get; }
 
         public HomeworkDetailViewModel(string homeworkId)
         {
@@ -75,6 +78,34 @@ namespace QRTrackerNext.ViewModels
                 }
 
                 IsBusy = false;
+            });
+
+            GoScanCommand = new Command(() =>
+            {
+                var csPage = new Views.ScanningOverlay.CustomScanPage();
+                csPage.OnScanResult += (result) =>
+                {
+                    var res = QRHelper.ParseStudentUri(result.Text);
+                    var student = realm.Find<Student>(res);
+                    if (student != null && allStudents.Contains(student))
+                    {
+                        realm.Write(() =>
+                        {
+                            var scan = realm.Add(new ScanLog()
+                            {
+                                student = student
+                            });
+                            homework.Scans.Add(scan);
+                        });
+                        csPage.LabelText = student.Name;
+                    }
+                    else
+                    {
+                        csPage.LabelText = "未知学生";
+                    }
+                };
+
+                Shell.Current.Navigation.PushAsync(csPage);
             });
         }
 

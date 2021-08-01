@@ -7,6 +7,9 @@
              xmlns:model="clr-namespace:QRTrackerNext.Models"
              x:DataType="local:HomeworkDetailViewModel"
              Appearing="ContentPage_Appearing">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Scan" Command="{Binding GoScanCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <RefreshView Command="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy}">
             <TableView HasUnevenRows="True" Intent="Data">

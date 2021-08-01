@@ -54,7 +54,7 @@ namespace QRTrackerNext.Views
                     ShowFlash = true
                 };
                 var overlay = new ScanningOverlay.Overlay(options);
-                var csPage = new ScanningOverlay.CustomScanPage(overlay);
+                var csPage = new ScanningOverlay.CustomScanPage();
 
                 csPage.OnScanResult = async (result) =>
                 {
