@@ -64,8 +64,13 @@ namespace QRTrackerNext.ViewModels
             AddGroupCommand = new Command(async () =>
             {
                 var result = await UserDialogs.Instance.PromptAsync("请输入新建班级名称", "新建班级");
-                if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
+                if (result.Ok)
                 {
+                    if (string.IsNullOrWhiteSpace(result.Text) || result.Text.Contains(','))
+                    {
+                        await UserDialogs.Instance.AlertAsync("请输入有效的名称, 不能包含逗号", "错误");
+                        return;
+                    }
                     realm.Write(() =>
                     {
                         realm.Add(new Group()
@@ -79,8 +84,13 @@ namespace QRTrackerNext.ViewModels
             UpdateGroupCommand = new Command<Group>(async (group) =>
             {
                 var result = await UserDialogs.Instance.PromptAsync($"将 {group.Name} 重命名为", "重命名班级");
-                if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
+                if (result.Ok)
                 {
+                    if (string.IsNullOrWhiteSpace(result.Text) || result.Text.Contains(','))
+                    {
+                        await UserDialogs.Instance.AlertAsync("请输入有效的名称, 不能包含逗号", "错误");
+                        return;
+                    }
                     realm.Write(() =>
                     {
                         group.Name = result.Text.Trim();

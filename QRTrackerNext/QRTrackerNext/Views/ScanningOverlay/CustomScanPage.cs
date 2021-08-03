@@ -6,6 +6,8 @@ using System.Diagnostics;
 
 using Xamarin.Forms;
 using ZXing.Net.Mobile.Forms;
+using System.IO;
+using System.Reflection;
 
 namespace QRTrackerNext.Views.ScanningOverlay
 {
@@ -17,9 +19,30 @@ namespace QRTrackerNext.Views.ScanningOverlay
         private Label label;
         private Frame frame;
 
-        public string LabelText {
-            get => label.Text;
-            set => label.Text = value;
+        Stream GetStreamFromFile(string filename)
+        {
+            var assembly = typeof(App).GetTypeInfo().Assembly;
+
+            var stream = assembly.GetManifestResourceStream("QRTrackerNext." + filename);
+
+            return stream;
+        }
+
+        public void ScanSuccess(string text = "扫描成功")
+        {
+            label.Text = text;
+            frame.BackgroundColor = Color.FromHex("#00C853");
+
+            var stream = GetStreamFromFile("ScanSound.mp3");
+            var audio = Plugin.SimpleAudioPlayer.CrossSimpleAudioPlayer.Current;
+            audio.Load(stream);
+            audio.Play();
+        }
+
+        public void ScanFailure(string text = "扫描失败")
+        {
+            label.Text = text;
+            frame.BackgroundColor = Color.FromHex("#FF6659");
         }
 
         string lastResult = "";
@@ -31,11 +54,11 @@ namespace QRTrackerNext.Views.ScanningOverlay
             frame = new Frame()
             {
                 Content = label,
-                BackgroundColor = Color.Accent,
+                BackgroundColor = Color.FromHex("#00C853"),
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.End,
-                Margin = 10,
-                CornerRadius = 10
+                Margin = 20,
+                CornerRadius = 3
             };
 
             Title = "扫一扫";
@@ -45,6 +68,10 @@ namespace QRTrackerNext.Views.ScanningOverlay
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 AutomationId = "zxingScannerView",
+                Options = new ZXing.Mobile.MobileBarcodeScanningOptions()
+                {
+                    PossibleFormats = { ZXing.BarcodeFormat.QR_CODE, ZXing.BarcodeFormat.PDF_417 }
+                }
             };
 
             // 返回结果

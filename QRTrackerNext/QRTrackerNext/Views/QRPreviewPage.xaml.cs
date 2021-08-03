@@ -61,7 +61,7 @@ namespace QRTrackerNext.Views
                     if (null != result)
                     {
                         //await DisplayAlert("扫描结果", result.Text, "确定");
-                        csPage.LabelText = result.Text;
+                        csPage.ScanSuccess(result.Text);
                     }
                 };
 

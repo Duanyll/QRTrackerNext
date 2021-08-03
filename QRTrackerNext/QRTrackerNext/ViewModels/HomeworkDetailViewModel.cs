@@ -89,19 +89,22 @@ namespace QRTrackerNext.ViewModels
                     var student = realm.Find<Student>(res);
                     if (student != null && allStudents.Contains(student))
                     {
-                        realm.Write(() =>
+                        if (studentsNotSubmitted.Contains(student))
                         {
-                            var scan = realm.Add(new ScanLog()
+                            realm.Write(() =>
                             {
-                                student = student
+                                var scan = realm.Add(new ScanLog()
+                                {
+                                    student = student
+                                });
+                                homework.Scans.Add(scan);
                             });
-                            homework.Scans.Add(scan);
-                        });
-                        csPage.LabelText = student.Name;
+                        }
+                        csPage.ScanSuccess(student.Name);
                     }
                     else
                     {
-                        csPage.LabelText = "未知学生";
+                        csPage.ScanFailure("未知学生");
                     }
                 };
 
