@@ -11,7 +11,7 @@ namespace QRTrackerNext.Models
         static Dictionary<string, Color> strToCol = new Dictionary<string, Color>()
         {
             { "red", Color.FromHex("#FF6558") },
-            { "yellow", Color.FromHex("#FDD835") },
+            { "yellow", Color.FromHex("#FFD600") },
             { "green", Color.FromHex("#00C853") },
             { "blue", Color.FromHex("#5498F9") },
             { "purple", Color.FromHex("#D56BF0") },
@@ -41,8 +41,8 @@ namespace QRTrackerNext.Models
         static Dictionary<string, Color> strToCol = new Dictionary<string, Color>()
         {
             { "red", Color.FromHex("#FF8A80") },
-            { "yellow", Color.FromHex("#FFF59D") },
-            { "green", Color.FromHex("#B0FF57") },
+            { "yellow", Color.FromHex("#FFD600") },
+            { "green", Color.FromHex("#00E676") },
             { "blue", Color.FromHex("#90CAF9") },
             { "purple", Color.FromHex("#CE93D8") },
             { "grey", Color.WhiteSmoke }
