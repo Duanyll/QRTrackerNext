@@ -1,4 +1,5 @@
-﻿using QRTrackerNext.Services;
+﻿using DLToolkit.Forms.Controls;
+using QRTrackerNext.Services;
 using QRTrackerNext.Views;
 using System;
 using Xamarin.Forms;
@@ -12,7 +13,7 @@ namespace QRTrackerNext
         public App()
         {
             InitializeComponent();
-
+            FlowListView.Init();
             MainPage = new AppShell();
         }
 

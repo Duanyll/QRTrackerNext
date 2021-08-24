@@ -14,7 +14,7 @@ namespace QRTrackerNext.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     [QueryProperty(nameof(HomeworkId), "homeworkId")]
-    public partial class HomeworkDetailPage : ContentPage
+    public partial class HomeworkDetailPage : TabbedPage
     {
         public string HomeworkId
         {
@@ -32,9 +32,19 @@ namespace QRTrackerNext.Views
             InitializeComponent();
         }
 
-        private void ContentPage_Appearing(object sender, EventArgs e)
+        private void TabbedPage_Appearing(object sender, EventArgs e)
         {
             viewModel.LoadStudentsCommand.Execute(null);
+        }
+
+        private void TextCellSubmitted_Tapped(object sender, EventArgs e)
+        {
+            CurrentPage = Children[1];
+        }
+
+        private void TextCellNotSubmitted_Tapped(object sender, EventArgs e)
+        {
+            CurrentPage = Children[2];
         }
     }
 }

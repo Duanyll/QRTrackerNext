@@ -32,7 +32,6 @@
     <TabBar>
         <ShellContent Title="班级" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:GroupsPage}" />
         <ShellContent Title="作业" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:HomeworksPage}" />
-        <ShellContent Title="QR" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:QRPreviewPage}" />
         <ShellContent Title="关于" Icon="icon_about.png" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
     </TabBar>
     

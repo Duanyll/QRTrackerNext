@@ -50,13 +50,17 @@
                 <Button Grid.Column="2" Text="生成" Command="{Binding GeneratePicCommand}"></Button>
                 <Button Grid.Column="3" Text="保存" Command="{Binding SavePicCommand}"></Button>
             </Grid>
-            <CarouselView ItemsSource="{Binding Images}">
+            <CarouselView ItemsSource="{Binding Images}" IndicatorView="indicatorView">
                 <CarouselView.ItemTemplate>
                     <DataTemplate x:DataType="StreamImageSource">  
                         <Image Source="{Binding .}"></Image>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
+            <IndicatorView x:Name="indicatorView"
+                   IndicatorColor="LightGray"
+                   SelectedIndicatorColor="DarkGray"
+                   HorizontalOptions="Center"></IndicatorView>
         </StackLayout>
     </RefreshView>
 </ContentPage>

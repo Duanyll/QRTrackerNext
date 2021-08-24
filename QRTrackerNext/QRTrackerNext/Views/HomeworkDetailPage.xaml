@@ -1,68 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QRTrackerNext.Views.HomeworkDetailPage"
-             Title="{Binding Title}"
-             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
-             xmlns:model="clr-namespace:QRTrackerNext.Models"
-             x:DataType="local:HomeworkDetailViewModel"
-             Appearing="ContentPage_Appearing">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Scan" Command="{Binding GoScanCommand}"></ToolbarItem>
-    </ContentPage.ToolbarItems>
-    <ContentPage.Content>
-        <RefreshView Command="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy}">
-            <TableView HasUnevenRows="True" Intent="Data">
-                <TableView.Root>
-                    <TableSection Title="总览">
-                        <TextCell Text="{Binding Homework.CreationTime.LocalDateTime, StringFormat='创建时间 {0:f}'}"></TextCell>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Homework.Groups}">
-                                    <BindableLayout.ItemTemplate>
-                                        <DataTemplate x:DataType="model:Group">
-                                            <Frame BackgroundColor="LightGray" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
-                                                <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
-                                            </Frame>
-                                        </DataTemplate>
-                                    </BindableLayout.ItemTemplate>
-                                </FlexLayout>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </TableSection>
-                    <TableSection Title="登记情况">
-                        <TextCell Text="{Binding StudentsSubmitted.Count, StringFormat='{0} 人已登记'}"></TextCell>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding StudentsSubmitted}">
-                                    <BindableLayout.ItemTemplate>
-                                        <DataTemplate x:DataType="model:Student">
-                                            <Frame BackgroundColor="LightGray" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
-                                                <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
-                                            </Frame>
-                                        </DataTemplate>
-                                    </BindableLayout.ItemTemplate>
-                                </FlexLayout>
-                            </ViewCell.View>
-                        </ViewCell>
-
-                        <TextCell Text="{Binding StudentsNotSubmitted.Count, StringFormat='{0} 人未登记'}"></TextCell>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding StudentsNotSubmitted}">
-                                    <BindableLayout.ItemTemplate>
-                                        <DataTemplate x:DataType="model:Student">
-                                            <Frame BackgroundColor="LightGray" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
-                                                <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
-                                            </Frame>
-                                        </DataTemplate>
-                                    </BindableLayout.ItemTemplate>
-                                </FlexLayout>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </TableSection>
-                </TableView.Root>
-            </TableView>
-        </RefreshView>
-    </ContentPage.Content>
-</ContentPage>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
+            x:Class="QRTrackerNext.Views.HomeworkDetailPage"
+            Title="{Binding Title}"
+            xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+            xmlns:model="clr-namespace:QRTrackerNext.Models"
+            x:DataType="local:HomeworkDetailViewModel"
+            Appearing="TabbedPage_Appearing">
+    <!--Pages can be added as references or inline-->
+    <ContentPage Title="总览">
+        <ContentPage.ToolbarItems>
+            <ToolbarItem Text="开始登记" Command="{Binding GoScanCommand}"></ToolbarItem>
+        </ContentPage.ToolbarItems>
+        <TableView HasUnevenRows="True" Intent="Data">
+            <TableView.Root>
+                <TableSection Title="作业信息">
+                    <TextCell TextColor="Black" Text="{Binding Homework.CreationTime.LocalDateTime, StringFormat='创建时间 {0:f}'}"></TextCell>
+                    <ViewCell>
+                        <StackLayout Padding="15, 10, 15, 10">
+                            <Label Text="包含班级"></Label>
+                            <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Homework.Groups}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Group">
+                                        <Frame BackgroundColor="LightBlue" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5">
+                                            <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                        </Frame>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </TableSection>
+                <TableSection Title="学生情况">
+                    <TextCell TextColor="Black" Text="{Binding StudentCount, StringFormat='总共有 {0} 人应登记作业'}"></TextCell>
+                    <TextCell TextColor="Black" Text="{Binding StudentsSubmitted.Count, StringFormat='有 {0} 人已经登记'}" Tapped="TextCellSubmitted_Tapped"></TextCell>
+                    <TextCell TextColor="Black" Text="{Binding StudentsNotSubmitted.Count, StringFormat='有 {0} 人未登记'}" Tapped="TextCellNotSubmitted_Tapped"></TextCell>
+                </TableSection>
+                <TableSection Title="操作">
+                    <TextCell Text="开始二维码登记" Command="{Binding GoScanCommand}"></TextCell>
+                </TableSection>
+            </TableView.Root>
+        </TableView>
+    </ContentPage>
+    <ContentPage Title="已登记学生">
+        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding StudentsSubmitted}">
+            <flv:FlowListView.FlowColumnTemplate>
+                <DataTemplate x:DataType="model:Student">
+                    <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                        <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                               Text="{Binding Name}"></Label>
+                    </Frame>
+                </DataTemplate>
+            </flv:FlowListView.FlowColumnTemplate>
+        </flv:FlowListView>
+    </ContentPage>
+    <ContentPage Title="未登记学生">
+        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding StudentsNotSubmitted}">
+            <flv:FlowListView.FlowColumnTemplate>
+                <DataTemplate x:DataType="model:Student">
+                    <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                        <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                               Text="{Binding Name}"></Label>
+                    </Frame>
+                </DataTemplate>
+            </flv:FlowListView.FlowColumnTemplate>
+        </flv:FlowListView>
+    </ContentPage>
+</TabbedPage>

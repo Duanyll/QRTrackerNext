@@ -124,7 +124,7 @@ namespace QRTrackerNext.ViewModels
                         await UserDialogs.Instance.AlertAsync("请确保已授权剪贴板权限", "读取失败");
                         return;
                     }
-                    var str = s.Split(';');
+                    var str = s.Split('\n');
 
                     List<string> names = new List<string>();
                     foreach (var i in str)
