@@ -7,7 +7,8 @@
             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
             xmlns:model="clr-namespace:QRTrackerNext.Models"
             x:DataType="local:HomeworkDetailViewModel"
-            Appearing="TabbedPage_Appearing">
+            Appearing="TabbedPage_Appearing"
+            x:Name="homeworkDetailPage">
     <!--Pages can be added as references or inline-->
     <ContentPage Title="总览">
         <ContentPage.ToolbarItems>
@@ -31,6 +32,19 @@
                             </FlexLayout>
                         </StackLayout>
                     </ViewCell>
+                    <ViewCell>
+                        <StackLayout Padding="15, 10, 15, 10">
+                            <Label Text="颜色标记"></Label>
+                            <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Homework.Colors}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Ellipse HeightRequest="20" WidthRequest="20" Margin="0, 0, 5, 0"
+                                                 BackgroundColor="{Binding ., Converter={StaticResource strToAccent}}"></Ellipse>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </StackLayout>
+                    </ViewCell>
                 </TableSection>
                 <TableSection Title="学生情况">
                     <TextCell TextColor="Black" Text="{Binding StudentCount, StringFormat='总共有 {0} 人应登记作业'}"></TextCell>
@@ -39,18 +53,23 @@
                 </TableSection>
                 <TableSection Title="操作">
                     <TextCell Text="开始二维码登记" Command="{Binding GoScanCommand}"></TextCell>
-                    <TextCell Text="手动登记" Command="{Binding ManualSubmitCommand}"></TextCell>
+                    <TextCell Text="搜索学生" Command="{Binding SearchStudentCommand}"></TextCell>
                 </TableSection>
             </TableView.Root>
         </TableView>
     </ContentPage>
     <ContentPage Title="已登记学生">
-        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding StudentsSubmitted}">
+        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding ScanLogs}">
             <flv:FlowListView.FlowColumnTemplate>
-                <DataTemplate x:DataType="model:Student">
-                    <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                <DataTemplate x:DataType="model:ScanLog">
+                    <Frame BackgroundColor="{Binding Color, Converter={StaticResource strToBackground}}" 
+                           CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=EditScanLogCommand}"
+                                                  CommandParameter="{Binding .}"></TapGestureRecognizer>
+                        </Frame.GestureRecognizers>
                         <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
-                               Text="{Binding Name}"></Label>
+                               Text="{Binding Student.Name}"></Label>
                     </Frame>
                 </DataTemplate>
             </flv:FlowListView.FlowColumnTemplate>
@@ -61,6 +80,10 @@
             <flv:FlowListView.FlowColumnTemplate>
                 <DataTemplate x:DataType="model:Student">
                     <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=SubmitStudentCommand}"
+                                                  CommandParameter="{Binding .}"></TapGestureRecognizer>
+                        </Frame.GestureRecognizers>
                         <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
                                Text="{Binding Name}"></Label>
                     </Frame>

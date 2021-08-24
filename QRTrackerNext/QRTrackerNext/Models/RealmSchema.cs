@@ -37,8 +37,9 @@ namespace QRTrackerNext.Models
 
     class ScanLog : RealmObject
     {
-        public Student student { get; set; }
-        public DateTimeOffset time { get; set; } = DateTimeOffset.Now;
+        public Student Student { get; set; }
+        public DateTimeOffset Time { get; set; } = DateTimeOffset.Now;
+        public string Color { get; set; } = "grey";
     }
 
     class Homework : RealmObject
@@ -54,5 +55,7 @@ namespace QRTrackerNext.Models
         public string Name { get; set; }
         public IList<Group> Groups { get; }
         public IList<ScanLog> Scans { get; }
+
+        public IList<string> Colors { get; }
     }
 }

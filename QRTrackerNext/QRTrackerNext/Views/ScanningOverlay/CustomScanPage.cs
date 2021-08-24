@@ -19,6 +19,9 @@ namespace QRTrackerNext.Views.ScanningOverlay
         private Label label;
         private Frame frame;
 
+        private StackLayout colorButtons;
+        private Action<string> colorCallback;
+
         Stream GetStreamFromFile(string filename)
         {
             var assembly = typeof(App).GetTypeInfo().Assembly;
@@ -43,11 +46,19 @@ namespace QRTrackerNext.Views.ScanningOverlay
         {
             label.Text = text;
             frame.BackgroundColor = Color.FromHex("#FF6659");
+            colorButtons.IsVisible = false;
+            colorCallback = null;
+        }
+
+        public void RequestRateLastScan(Action<string> callback)
+        {
+            colorButtons.IsVisible = true;
+            colorCallback = callback;
         }
 
         string lastResult = "";
 
-        public CustomScanPage() : base()
+        public CustomScanPage(List<string> colors = null) : base()
         {
             overlay = new Overlay();
             label = new Label() { Text = "请扫描学生二维码" };
@@ -60,6 +71,46 @@ namespace QRTrackerNext.Views.ScanningOverlay
                 Margin = 20,
                 CornerRadius = 3
             };
+
+            colorButtons = new StackLayout()
+            {
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.End,
+                Margin = new Thickness(0, 0, 0, 150),
+                Orientation = StackOrientation.Horizontal,
+                Spacing = 20,
+                IsVisible = false
+            };
+            if (colors != null)
+            {
+                var converter = new Models.StringToAccentColorConvertor();
+                foreach (var color in colors)
+                {
+                    var button = new Button()
+                    {
+                        BackgroundColor = (Color)converter.Convert(color, null, null, null),
+                        WidthRequest = 50,
+                        HeightRequest = 50
+                    };
+                    button.Clicked += (_, __) =>
+                    {
+                        if (colorCallback != null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                colorCallback(color);
+                                colorCallback = null;
+                            });
+                        } 
+                        else
+                        {
+                            colorCallback = null;
+                        }
+                        colorButtons.IsVisible = false;
+                    };
+                    colorButtons.Children.Add(button);
+                }
+            }
 
             Title = "扫一扫";
 
@@ -102,7 +153,8 @@ namespace QRTrackerNext.Views.ScanningOverlay
                 {
                     zxing,
                     overlay,
-                    frame
+                    frame,
+                    colorButtons
                 }
             };
 

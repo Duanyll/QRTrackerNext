@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QRTrackerNext.App">
+             x:Class="QRTrackerNext.App"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models">
     <!--
         Define global resources and styles here, that apply to all pages in your app.
     -->
@@ -27,6 +29,9 @@
                     </VisualStateGroupList>
                 </Setter>
             </Style>
+            <model:StringToAccentColorConvertor x:Key="strToAccent"></model:StringToAccentColorConvertor>
+            <model:StringToBackgroundColorConvertor x:Key="strToBackground"></model:StringToBackgroundColorConvertor>
+            <model:ColorChineseNameConvertor x:Key="colToChinese"></model:ColorChineseNameConvertor>
         </ResourceDictionary>        
     </Application.Resources>
 </Application>

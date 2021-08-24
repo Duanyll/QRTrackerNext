@@ -21,6 +21,11 @@ namespace QRTrackerNext.ViewModels
         public SelectableGroup(Group group) : base(group) { }
     }
 
+    class SelectableColorName : SelectableData<string>
+    {
+        public SelectableColorName(string str) : base(str) { }
+    }
+
     class NewHomeworkViewModel : BaseViewModel
     {
         public Command CreateNewHomeworkCommand { get; }
@@ -36,6 +41,7 @@ namespace QRTrackerNext.ViewModels
         }
 
         public ObservableCollection<SelectableGroup> Groups { get; }
+        public ObservableCollection<SelectableColorName> ColorNames { get; }
 
         public NewHomeworkViewModel()
         {
@@ -48,6 +54,15 @@ namespace QRTrackerNext.ViewModels
                 Groups.Add(new SelectableGroup(i));
             }
 
+            ColorNames = new ObservableCollection<SelectableColorName>()
+            {
+                new SelectableColorName("red") { Selected = true },
+                new SelectableColorName("yellow") { Selected = true },
+                new SelectableColorName("green") { Selected = true },
+                new SelectableColorName("blue"),
+                new SelectableColorName("purple")
+            };
+
             CreateNewHomeworkCommand = new Command(async () =>
             {
                 realm.Write(() =>
@@ -56,6 +71,10 @@ namespace QRTrackerNext.ViewModels
                     foreach (var i in Groups.Where(i => i.Selected))
                     {
                         homework.Groups.Add(i.Data);
+                    }
+                    foreach (var i in ColorNames.Where(i => i.Selected)) 
+                    {
+                        homework.Colors.Add(i.Data);
                     }
                 });
                 await Shell.Current.GoToAsync("..");
