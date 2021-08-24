@@ -39,6 +39,7 @@
                 </TableSection>
                 <TableSection Title="操作">
                     <TextCell Text="开始二维码登记" Command="{Binding GoScanCommand}"></TextCell>
+                    <TextCell Text="手动登记" Command="{Binding ManualSubmitCommand}"></TextCell>
                 </TableSection>
             </TableView.Root>
         </TableView>
