@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using ZXing.Net.Mobile.Forms;
 using System.IO;
 using System.Reflection;
+using Acr.UserDialogs;
 
 namespace QRTrackerNext.Views.ScanningOverlay
 {
@@ -21,6 +22,7 @@ namespace QRTrackerNext.Views.ScanningOverlay
 
         private StackLayout colorButtons;
         private Action<string> colorCallback;
+        private string defaultColor;
 
         Stream GetStreamFromFile(string filename)
         {
@@ -52,8 +54,18 @@ namespace QRTrackerNext.Views.ScanningOverlay
 
         public void RequestRateLastScan(Action<string> callback)
         {
-            colorButtons.IsVisible = true;
-            colorCallback = callback;
+            if (defaultColor != null)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    callback(defaultColor);
+                });
+            }
+            else
+            {
+                colorButtons.IsVisible = true;
+                colorCallback = callback;
+            }
         }
 
         string lastResult = "";
@@ -101,7 +113,7 @@ namespace QRTrackerNext.Views.ScanningOverlay
                                 colorCallback(color);
                                 colorCallback = null;
                             });
-                        } 
+                        }
                         else
                         {
                             colorCallback = null;
@@ -110,6 +122,30 @@ namespace QRTrackerNext.Views.ScanningOverlay
                     };
                     colorButtons.Children.Add(button);
                 }
+
+                var strToName = new Models.ColorChineseNameConvertor();
+                ToolbarItems.Add(new ToolbarItem()
+                {
+                    Text = "设置默认颜色",
+                    Command = new Command(async () =>
+                    {
+                        var color = await UserDialogs.Instance.ActionSheetAsync("选择默认颜色", "不设置默认颜色", null, null,
+                            colors.Select(i => strToName.Convert(i, null, null, null) as string).ToArray());
+                        if (!string.IsNullOrEmpty(color))
+                        {
+                            if (color != "不设置默认颜色")
+                            {
+                                defaultColor = strToName.ConvertBack(color, null, null, null) as string;
+                                Title = $"扫一扫 ({color})";
+                            }
+                            else
+                            {
+                                defaultColor = null;
+                                Title = "扫一扫";
+                            }
+                        }
+                    })
+                });
             }
 
             Title = "扫一扫";
