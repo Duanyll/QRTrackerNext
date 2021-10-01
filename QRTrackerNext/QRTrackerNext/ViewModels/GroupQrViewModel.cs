@@ -96,16 +96,15 @@ namespace QRTrackerNext.ViewModels
                 IsBusy = true;
                 await Task.Run(() =>
                 {
-                    var skbitmaps = UsePDF417 ?
+                    bitmaps = UsePDF417 ?
                         QRHelper.GetClassPDF417CodePic(stuList, WidthCount, HeightCount)
                         : QRHelper.GetClassQrCodePic(stuList, WidthCount, HeightCount);
-                    bitmaps = skbitmaps;
-                    Images.Clear();
-                    foreach (var i in skbitmaps)
-                    {
-                        Images.Add(ImageSource.FromStream(() => i.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream()));
-                    }
                 });
+                Images.Clear();
+                foreach (var i in bitmaps)
+                {
+                    Images.Add(ImageSource.FromStream(() => i.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream()));
+                }
                 IsBusy = false;
             }, () => !IsBusy);
 
@@ -124,6 +123,7 @@ namespace QRTrackerNext.ViewModels
                             store.SaveImageFromStream(bitmaps[i].Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream(), $"{group.Name}-{i + 1}.png");
                         }
                     });
+                    UserDialogs.Instance.Toast("已保存到相册 /sdcard/Pictures/QRTracker", new TimeSpan(0, 0, 5));
                     IsBusy = false;
                 }
             }, () => !IsBusy && bitmaps?.Count > 0);

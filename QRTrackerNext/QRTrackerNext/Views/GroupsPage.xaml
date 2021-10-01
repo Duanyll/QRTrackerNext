@@ -10,7 +10,7 @@
              Appearing="BrowseGroupsPage_Appearing"
              Disappearing="BrowseGroupsPage_Disappearing">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddGroupCommand}"></ToolbarItem>
+        <ToolbarItem Text="新建" Command="{Binding AddGroupCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ListView ItemsSource="{Binding Groups}" RefreshCommand="{Binding LoadGroupsCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
         <ListView.ItemTemplate>

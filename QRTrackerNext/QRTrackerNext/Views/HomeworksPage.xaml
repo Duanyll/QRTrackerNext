@@ -10,7 +10,7 @@
              Appearing="BrowseHomeworksPage_Appearing"
              Disappearing="BrowseHomeworksPage_Disappearing">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddHomeworkCommand}"></ToolbarItem>
+        <ToolbarItem Text="新建" Command="{Binding AddHomeworkCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ListView ItemsSource="{Binding Homeworks}" RefreshCommand="{Binding LoadHomeworksCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
         <ListView.ItemTemplate>
@@ -25,7 +25,6 @@
                         </MenuItem>
                     </TextCell.ContextActions>
                 </TextCell>
-
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
