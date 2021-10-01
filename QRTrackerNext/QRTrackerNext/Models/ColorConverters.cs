@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using Xamarin.Forms;
+using Xamarin.Essentials;
 
 namespace QRTrackerNext.Models
 {
@@ -92,6 +93,11 @@ namespace QRTrackerNext.Models
         {
             if (strToCol.TryGetValue(value.ToString(), out var res))
             {
+                var customName = Preferences.Get($"name_{value}", null);
+                if (!string.IsNullOrWhiteSpace(customName))
+                {
+                    res = $"{res}: {customName.Trim()}";
+                }
                 return res;
             }
             else
@@ -102,7 +108,7 @@ namespace QRTrackerNext.Models
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (back.TryGetValue(value.ToString(), out var res))
+            if (back.TryGetValue(value.ToString().Split(':')[0], out var res))
             {
                 return res;
             }

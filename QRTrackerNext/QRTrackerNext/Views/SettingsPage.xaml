@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.SettingsPage"
+             Title="设置"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:SettingsViewModel">
+    <ContentPage.Content>
+        <TableView>
+            <TableView.Root>
+                <TableSection Title="颜色名称">
+                    <EntryCell Label="红色" Text="{Binding NameRed}"></EntryCell>
+                    <EntryCell Label="黄色" Text="{Binding NameYellow}"></EntryCell>
+                    <EntryCell Label="绿色" Text="{Binding NameGreen}"></EntryCell>
+                    <EntryCell Label="蓝色" Text="{Binding NameBlue}"></EntryCell>
+                    <EntryCell Label="紫色" Text="{Binding NamePurple}"></EntryCell>
+                </TableSection>
+            </TableView.Root>
+        </TableView>
+    </ContentPage.Content>
+</ContentPage>
