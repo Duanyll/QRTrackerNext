@@ -11,10 +11,9 @@
              Disappearing="BrowseStudentsPage_Disappearing">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="添加学生" Command="{Binding AddStudentCommand}" Order="Secondary"></ToolbarItem>
-        <ToolbarItem Text="导入新学生" Command="{Binding ImportStudentCommand}" Order="Primary"></ToolbarItem>
-        <ToolbarItem Text="导入其他设备上的学生" Command="{Binding ImportExistedStudentCommand}" Order="Secondary"></ToolbarItem>
-        <ToolbarItem Text="导出学生二维码" Command="{Binding ShowGroupQrCommand}" Order="Secondary"></ToolbarItem>
-        <ToolbarItem Text="导出学生到其他设备" Command="{Binding ExportStudentCommand}" Order="Secondary"></ToolbarItem>
+        <ToolbarItem Text="导入学生" Command="{Binding ImportStudentCommand}" Order="Primary"></ToolbarItem>
+        <ToolbarItem Text="打印二维码" Command="{Binding ShowGroupQrCommand}" Order="Secondary"></ToolbarItem>
+        <ToolbarItem Text="导出学生" Command="{Binding ExportStudentCommand}" Order="Secondary"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ListView ItemsSource="{Binding Students}" RefreshCommand="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
         <ListView.ItemTemplate>
