@@ -93,7 +93,7 @@ namespace QRTrackerNext.Views.ScanningOverlay
                 Spacing = 20,
                 IsVisible = false
             };
-            if (colors != null)
+            if (colors != null && colors.Count > 0)
             {
                 var converter = new Models.StringToAccentColorConvertor();
                 foreach (var color in colors)

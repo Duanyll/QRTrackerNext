@@ -33,15 +33,16 @@ namespace QRTrackerNext.Droid
             }
         }
 
-        public void SaveCSV(string csv, string fileName)
+        public string SaveCSV(string csv, string fileName)
         {
-            var dir = Path.Combine("/storage/emulated/0/Document/QRTracker");
+            var dir = Path.Combine("/storage/emulated/0/Documents/QRTracker");
             var path = Path.Combine(dir, fileName);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
             File.WriteAllText(path, csv);
+            return path;
         }
     }
 }

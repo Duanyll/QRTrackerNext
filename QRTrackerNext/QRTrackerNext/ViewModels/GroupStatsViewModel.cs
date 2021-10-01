@@ -9,7 +9,7 @@ using MongoDB.Bson;
 using Acr.UserDialogs;
 
 using Xamarin.Forms;
-//using Xamarin.Essentials;
+using Xamarin.Essentials;
 
 using QRTrackerNext.Models;
 using QRTrackerNext.Views;
@@ -37,11 +37,11 @@ namespace QRTrackerNext.ViewModels
         {
             var current = CrossPermissions.Current;
             var status = await current.CheckPermissionStatusAsync<StoragePermission>();
-            if (status != PermissionStatus.Granted)
+            if (status != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
             {
                 status = await current.RequestPermissionAsync<StoragePermission>();
             }
-            return status == PermissionStatus.Granted;
+            return status == Plugin.Permissions.Abstractions.PermissionStatus.Granted;
         }
 
         public GroupStatsViewModel(string groupId)
@@ -76,13 +76,13 @@ namespace QRTrackerNext.ViewModels
                 if (await CheckPermission())
                 {
                     var groupName = group.Name;
-                    var homeworkIds = Homeworks.Where(i => i.Selected).Select(i => i.Data.Id).ToArray();
-                    await Task.Run(() =>
+                    var homeworkIds = Homeworks.Where(i => i.Selected).OrderBy(i =>i.Data.CreationTime).Select(i => i.Data.Id).ToArray();
+                    await Task.Run(async () =>
                     {
                         var csv = QRHelper.ExportStatsCSV(ObjectId.Parse(groupId), homeworkIds);
                         var store = DependencyService.Get<IMediaStore>();
-                        store.SaveCSV(csv, $"{groupName}-{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.csv");
-                        UserDialogs.Instance.Toast("已保存到 /sdcard/Document/QRTracker", new TimeSpan(0, 0, 5));
+                        var path = store.SaveCSV(csv, $"{groupName}-{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.csv");
+                        UserDialogs.Instance.Toast("已保存到 /sdcard/Documents/QRTracker", new TimeSpan(0, 0, 5));
                     });
                 }
                 IsBusy = false;
