@@ -27,6 +27,7 @@ namespace QRTrackerNext.ViewModels
         {
             get => nameRed;
             set {
+                if (value?.Contains(',') ?? false) return; 
                 SetProperty(ref nameRed, value);
                 Preferences.Set("name_red", value);
             }
@@ -37,6 +38,7 @@ namespace QRTrackerNext.ViewModels
             get => nameYellow;
             set
             {
+                if (value?.Contains(',') ?? false) return;
                 SetProperty(ref nameYellow, value);
                 Preferences.Set("name_yellow", value);
             }
@@ -47,6 +49,7 @@ namespace QRTrackerNext.ViewModels
             get => nameGreen;
             set
             {
+                if (value?.Contains(',') ?? false) return;
                 SetProperty(ref nameGreen, value);
                 Preferences.Set("name_green", value);
             }
@@ -57,6 +60,7 @@ namespace QRTrackerNext.ViewModels
             get => nameBlue;
             set
             {
+                if (value?.Contains(',') ?? false) return;
                 SetProperty(ref nameBlue, value);
                 Preferences.Set("name_blue", value);
             }
@@ -67,6 +71,7 @@ namespace QRTrackerNext.ViewModels
             get => namePurple;
             set
             {
+                if (value?.Contains(',') ?? false) return;
                 SetProperty(ref namePurple, value);
                 Preferences.Set("name_purple", value);
             }

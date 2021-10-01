@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.GroupStatsPage"
+             Title="选择作业"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:GroupStatsViewModel">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="导出CSV" Command="{Binding ExportCSVCommand}"></ToolbarItem>
+        <ToolbarItem Text="全选" Order="Secondary" Command="{Binding SelectAllCommand}"></ToolbarItem>
+        <ToolbarItem Text="全不选" Order="Secondary" Command="{Binding SelectNoneCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <ListView ItemsSource="{Binding Homeworks}" SelectionMode="None" RowHeight="45" VerticalScrollBarVisibility="Never">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:SelectableHomework">
+                    <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}" OnChanged="SwitchCell_OnChanged"></SwitchCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

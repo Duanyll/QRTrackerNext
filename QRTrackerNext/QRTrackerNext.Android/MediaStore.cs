@@ -32,5 +32,16 @@ namespace QRTrackerNext.Droid
                 imageStream.CopyTo(fileStream);
             }
         }
+
+        public void SaveCSV(string csv, string fileName)
+        {
+            var dir = Path.Combine("/storage/emulated/0/Document/QRTracker");
+            var path = Path.Combine(dir, fileName);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            File.WriteAllText(path, csv);
+        }
     }
 }

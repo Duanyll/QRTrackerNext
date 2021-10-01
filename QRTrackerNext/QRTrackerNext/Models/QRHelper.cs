@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
+using Realms;
 
 using MongoDB.Bson;
+using Xamarin.Essentials;
 
 using SkiaSharp;
 using ZXing;
@@ -80,20 +83,13 @@ namespace QRTrackerNext.Models
                                 {
                                     goto END;
                                 }
-                                try
-                                {
-                                    var student = stuList[cur++];
-                                    var qrBitmap = writer.Write($"https://qrt.duanyll.com/stu?id={student.Id}");
+                                var student = stuList[cur++];
+                                var qrBitmap = writer.Write($"https://qrt.duanyll.com/stu?id={student.Id}");
 
-                                    var offsetTop = QRCODE_PADDING * (i + 1) + (QRCODE_HEIGHT + (int)bounds.Height) * i;
-                                    var offsetLeft = QRCODE_PADDING * (j + 1) + QRCODE_WIDTH * j;
-                                    canvas.DrawBitmap(qrBitmap, new SKPoint() { X = offsetLeft, Y = offsetTop });
-                                    canvas.DrawText(student.Name, new SKPoint() { X = offsetLeft, Y = offsetTop + QRCODE_HEIGHT + (int)bounds.Height }, textPaint);
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw ex;
-                                }
+                                var offsetTop = QRCODE_PADDING * (i + 1) + (QRCODE_HEIGHT + (int)bounds.Height) * i;
+                                var offsetLeft = QRCODE_PADDING * (j + 1) + QRCODE_WIDTH * j;
+                                canvas.DrawBitmap(qrBitmap, new SKPoint() { X = offsetLeft, Y = offsetTop });
+                                canvas.DrawText(student.Name, new SKPoint() { X = offsetLeft, Y = offsetTop + QRCODE_HEIGHT + (int)bounds.Height }, textPaint);
                             }
                         }
                     }
@@ -170,6 +166,56 @@ namespace QRTrackerNext.Models
             }
 
             return res;
+        }
+
+        public static string ExportStatsCSV(ObjectId groupId, ObjectId[] homeworksId)
+        {
+            var colorNames = new Dictionary<string, string>()
+            {
+                { "red", Preferences.Get("name_red", "红") },
+                { "yellow", Preferences.Get("name_yellow", "黄") },
+                { "green", Preferences.Get("name_green", "绿") },
+                { "blue", Preferences.Get("name_blue", "蓝") },
+                { "purple", Preferences.Get("name_purple", "紫") },
+                { "grey", "√" }
+            };
+
+            var realm = Realm.GetInstance();
+            var group = realm.Find<Group>(groupId);
+            var homeworks = homeworksId.Select(i => realm.Find<Homework>(i)).ToArray();
+            var stateMap = homeworks.Select(cur =>
+            {
+                var map = new Dictionary<ObjectId, string>();
+                foreach (var i in cur.Scans)
+                {
+                    map.Add(i.Student.Id, colorNames[i.Color ?? "grey"]);
+                }
+                return map;
+            });
+
+            var res = new StringBuilder("姓名,");
+            foreach (var i in homeworks)
+            {
+                res.Append(i.Name);
+                res.Append(',');
+            }
+            res.AppendLine();
+            foreach (var i in group.Students)
+            {
+                res.Append(i.Name);
+                res.Append(',');
+                foreach (var map in stateMap)
+                {
+                    if (map.TryGetValue(i.Id, out var state))
+                    {
+                        res.Append(state);
+                    }
+                    res.Append(',');
+                }
+                res.AppendLine();
+            }
+
+            return res.ToString();
         }
     }
 }

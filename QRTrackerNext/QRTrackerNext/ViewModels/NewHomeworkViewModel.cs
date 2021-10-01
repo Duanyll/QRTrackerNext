@@ -78,7 +78,7 @@ namespace QRTrackerNext.ViewModels
                     }
                 });
                 await Shell.Current.GoToAsync("..");
-            }, () => !string.IsNullOrWhiteSpace(Name) && Groups.Any(i => i.Selected));
+            }, () => !string.IsNullOrWhiteSpace(Name) && Groups.Any(i => i.Selected) && !Name.Contains(','));
 
             PropertyChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();
             Groups.CollectionChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();

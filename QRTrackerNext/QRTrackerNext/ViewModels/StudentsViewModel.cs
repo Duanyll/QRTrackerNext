@@ -40,6 +40,7 @@ namespace QRTrackerNext.ViewModels
         public Command<Student> StudentTapped { get; }
 
         public Command ShowGroupQrCommand { get; }
+        public Command ExportStatsCommand { get; }
 
         private Realm realm;
         protected Group group;
@@ -240,6 +241,10 @@ namespace QRTrackerNext.ViewModels
             ShowGroupQrCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync($"{nameof(GroupQrPage)}?groupId={groupId}");
+            });
+            ExportStatsCommand = new Command(async () =>
+            {
+                await Shell.Current.GoToAsync($"{nameof(GroupStatsPage)}?groupId={groupId}");
             });
         }
 
