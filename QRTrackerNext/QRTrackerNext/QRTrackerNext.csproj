@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <Version>1.1.0</Version>
+    <Authors>Duanyll</Authors>
+    <Product>QRTracker</Product>
+    <PackageProjectUrl>https://qrt.duanyll.com</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Duanyll/QRTrackerNext</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
