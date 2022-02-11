@@ -50,7 +50,7 @@ namespace QRTrackerNext.ViewModels
 
         public HomeworkDetailViewModel(string homeworkId)
         {
-            realm = Realm.GetInstance();
+            realm = Services.RealmManager.OpenDefault();
             Homework = realm.Find<Homework>(ObjectId.Parse(homeworkId));
             StudentsSubmitted = new ObservableCollection<Student>();
             StudentsNotSubmitted = new ObservableCollection<Student>();

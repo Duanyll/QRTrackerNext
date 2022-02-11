@@ -27,8 +27,7 @@ namespace QRTrackerNext.ViewModels
             }
         }
 
-        public ObservableCollection<Homework> Homeworks { get; }
-        public Command LoadHomeworksCommand { get; }
+        public IQueryable<Homework> Homeworks { get; }
         public Command AddHomeworkCommand { get; }
         public Command<Homework> RemoveHomeworkCommand { get; }
         public Command<Homework> HomeworkTapped { get; }
@@ -37,30 +36,9 @@ namespace QRTrackerNext.ViewModels
 
         public HomeworksViewModel()
         {
-            realm = Realm.GetInstance();
+            realm = Services.RealmManager.OpenDefault();
             Title = "所有作业";
-            Homeworks = new ObservableCollection<Homework>();
-            LoadHomeworksCommand = new Command(() =>
-            {
-                IsBusy = true;
-                try
-                {
-                    Homeworks.Clear();
-                    var homeworksQuery = realm.All<Homework>().OrderByDescending(i => i.CreationTime);
-                    foreach (var i in homeworksQuery)
-                    {
-                        Homeworks.Add(i);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            });
+            Homeworks = realm.All<Homework>().OrderByDescending(i => i.CreationTime);
             AddHomeworkCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync($"{nameof(NewHomeworkPage)}");
@@ -79,25 +57,6 @@ namespace QRTrackerNext.ViewModels
                     });
             });
             HomeworkTapped = new Command<Homework>(OnHomeworkSelected);
-        }
-
-        private IDisposable realmToken;
-        public void OnAppearing()
-        {
-            selectedHomework = null;
-            realmToken = realm.All<Homework>().SubscribeForNotifications((sender, changes, error) =>
-            {
-                if (error != null)
-                {
-                    Debug.WriteLine(error);
-                }
-                LoadHomeworksCommand.Execute(null);
-            });
-        }
-
-        public void OnDisappearing()
-        {
-            realmToken.Dispose();
         }
 
         async void OnHomeworkSelected(Homework homework)

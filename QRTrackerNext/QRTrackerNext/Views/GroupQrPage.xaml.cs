@@ -20,14 +20,12 @@ namespace QRTrackerNext.Views
         {
             set
             {
-                viewModel.groupId = value;
+                BindingContext = new GroupQrViewModel(value);
             }
         }
 
-        GroupQrViewModel viewModel;
         public GroupQrPage()
         {
-            BindingContext = viewModel = new GroupQrViewModel();
             InitializeComponent();
         }
     }

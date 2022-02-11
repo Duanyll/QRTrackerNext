@@ -58,7 +58,7 @@ namespace QRTrackerNext.ViewModels
         public StudentsViewModel(string groupId)
         {
             GroupId = groupId;
-            realm = Realm.GetInstance();
+            realm = Services.RealmManager.OpenDefault();
             group = realm.Find<Group>(ObjectId.Parse(groupId));
             Students = new ObservableCollection<Student>();
             if (group == null)

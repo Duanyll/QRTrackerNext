@@ -46,7 +46,7 @@ namespace QRTrackerNext.ViewModels
         public NewHomeworkViewModel()
         {
             Title = "新建作业";
-            var realm = Realm.GetInstance();
+            var realm = Services.RealmManager.OpenDefault();
             var groups = realm.All<Group>().OrderBy(i => i.Name);
             Groups = new ObservableCollection<SelectableGroup>();
             foreach (var i in groups)

@@ -12,7 +12,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="新建" Command="{Binding AddHomeworkCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <ListView ItemsSource="{Binding Homeworks}" RefreshCommand="{Binding LoadHomeworksCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
+    <ListView ItemsSource="{Binding Homeworks}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="model:Homework">
                 <TextCell Text="{Binding Name}" Detail="{Binding CreationTime.LocalDateTime, StringFormat='{0:f}'}" 

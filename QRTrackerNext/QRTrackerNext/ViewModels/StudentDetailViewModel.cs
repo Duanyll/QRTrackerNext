@@ -51,7 +51,7 @@ namespace QRTrackerNext.ViewModels
 
         public StudentDetailViewModel(string studentId)
         {
-            var realm = Realm.GetInstance();
+            var realm = Services.RealmManager.OpenDefault();
             student = realm.Find<Student>(ObjectId.Parse(studentId));
             Name = Title = student.Name;
             Uri = QRHelper.GetStudentUri(student);

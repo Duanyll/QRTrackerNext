@@ -26,8 +26,7 @@ namespace QRTrackerNext.ViewModels
             }
         }
 
-        public ObservableCollection<Group> Groups { get; }
-        public Command LoadGroupsCommand { get; }
+        public IQueryable<Group> Groups { get; }
         public Command AddGroupCommand { get; }
         public Command<Group> UpdateGroupCommand { get; }
         public Command<Group> RemoveGroupCommand { get; }
@@ -37,30 +36,9 @@ namespace QRTrackerNext.ViewModels
 
         public GroupsViewModel()
         {
-            realm = Realm.GetInstance();
+            realm = Services.RealmManager.OpenDefault();
             Title = "所有班级";
-            Groups = new ObservableCollection<Group>();
-            LoadGroupsCommand = new Command(() =>
-            {
-                IsBusy = true;
-                try
-                {
-                    Groups.Clear();
-                    var groupsQuery = realm.All<Group>().OrderBy(i => i.Name);
-                    foreach (var i in groupsQuery)
-                    {
-                        Groups.Add(i);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            });
+            Groups = realm.All<Group>().OrderBy(i => i.Name);
             AddGroupCommand = new Command(async () =>
             {
                 var result = await UserDialogs.Instance.PromptAsync("请输入新建班级名称", "新建班级");
@@ -118,27 +96,6 @@ namespace QRTrackerNext.ViewModels
                 }
             });
             GroupTapped = new Command<Group>(OnGroupSelected);
-
-
-        }
-
-        private IDisposable realmToken;
-        public void OnAppearing()
-        {
-            selectedGroup = null;
-            realmToken = realm.All<Group>().SubscribeForNotifications((sender, changes, error) =>
-            {
-                if (error != null)
-                {
-                    Debug.WriteLine(error);
-                }
-                LoadGroupsCommand.Execute(null);
-            });
-        }
-
-        public void OnDisappearing()
-        {
-            realmToken.Dispose();
         }
 
         async void OnGroupSelected(Group group)

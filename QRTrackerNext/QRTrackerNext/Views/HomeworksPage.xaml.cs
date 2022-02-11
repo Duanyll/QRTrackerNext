@@ -24,12 +24,12 @@ namespace QRTrackerNext.Views
 
         private void BrowseHomeworksPage_Appearing(object sender, EventArgs e)
         {
-            viewModel.OnAppearing();
+            //viewModel.OnAppearing();
         }
 
         private void BrowseHomeworksPage_Disappearing(object sender, EventArgs e)
         {
-            viewModel.OnDisappearing();
+            //viewModel.OnDisappearing();
         }
     }
 }

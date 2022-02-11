@@ -46,7 +46,7 @@ namespace QRTrackerNext.Models
         const int QRCODE_TEXT_SIZE = 48;
         const int QRCODE_PADDING = 40;
 
-        public static List<SKBitmap> GetClassQrCodePic(List<(string Id, string Name)> stuList, int w, int h)
+        public static List<SKBitmap> GetClassQrCodePic(IList<Student> stuList, int w, int h)
         {
             int cur = 0;
             List<SKBitmap> res = new List<SKBitmap>();
@@ -106,7 +106,7 @@ namespace QRTrackerNext.Models
         const int PDF417_TEXT_SIZE = 36;
         const int PDF417_PADDING = 40;
 
-        public static List<SKBitmap> GetClassPDF417CodePic(List<(string Id, string Name)> stuList, int w, int h)
+        public static List<SKBitmap> GetClassPDF417CodePic(IList<Student> stuList, int w, int h)
         {
             int cur = 0;
             List<SKBitmap> res = new List<SKBitmap>();
@@ -180,7 +180,7 @@ namespace QRTrackerNext.Models
                 { "grey", "√" }
             };
 
-            var realm = Realm.GetInstance();
+            var realm = Services.RealmManager.OpenDefault();
             var group = realm.Find<Group>(groupId);
             var homeworks = homeworksId.Select(i => realm.Find<Homework>(i)).ToArray();
             var stateMap = homeworks.Select(cur =>

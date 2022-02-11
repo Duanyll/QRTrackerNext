@@ -12,7 +12,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="新建" Command="{Binding AddGroupCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <ListView ItemsSource="{Binding Groups}" RefreshCommand="{Binding LoadGroupsCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
+    <ListView ItemsSource="{Binding Groups}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="model:Group">
                 <TextCell Text="{Binding Name}" Detail="{Binding Id}" 

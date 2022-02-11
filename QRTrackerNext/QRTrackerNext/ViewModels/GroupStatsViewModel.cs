@@ -46,7 +46,7 @@ namespace QRTrackerNext.ViewModels
 
         public GroupStatsViewModel(string groupId)
         {
-            var realm = Realm.GetInstance();
+            var realm = RealmManager.OpenDefault();
             var group = realm.Find<Group>(ObjectId.Parse(groupId));
             Homeworks = new ObservableCollection<SelectableHomework>();
             foreach (var i in group.Homeworks.OrderByDescending(i => i.CreationTime))
@@ -76,7 +76,7 @@ namespace QRTrackerNext.ViewModels
                 if (await CheckPermission())
                 {
                     var groupName = group.Name;
-                    var homeworkIds = Homeworks.Where(i => i.Selected).OrderBy(i =>i.Data.CreationTime).Select(i => i.Data.Id).ToArray();
+                    var homeworkIds = Homeworks.Where(i => i.Selected).OrderBy(i => i.Data.CreationTime).Select(i => i.Data.Id).ToArray();
                     await Task.Run(async () =>
                     {
                         var csv = QRHelper.ExportStatsCSV(ObjectId.Parse(groupId), homeworkIds);

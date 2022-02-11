@@ -67,8 +67,6 @@ namespace QRTrackerNext.ViewModels
         public Command GeneratePicCommand { get; }
         public Command SavePicCommand { get; }
 
-        public string groupId { get; set; }
-
         private async Task<bool> CheckPermission()
         {
             var current = CrossPermissions.Current;
@@ -80,25 +78,20 @@ namespace QRTrackerNext.ViewModels
             return status == PermissionStatus.Granted;
         }
 
-        public GroupQrViewModel()
+        public GroupQrViewModel(string groupId)
         {
             Images = new ObservableCollection<ImageSource>();
+            var realm = RealmManager.OpenDefault();
+            var group = realm.Find<Group>(ObjectId.Parse(groupId)).Freeze();
 
             GeneratePicCommand = new Command(async () =>
             {
-                var realm = Realm.GetInstance();
-                var group = realm.Find<Group>(ObjectId.Parse(groupId));
-                List<(string Id, string Name)> stuList = new List<(string Id, string Name)>();
-                foreach (var i in group.Students)
-                {
-                    stuList.Add((i.Id.ToString(), i.Name));
-                }
                 IsBusy = true;
                 await Task.Run(() =>
                 {
                     bitmaps = UsePDF417 ?
-                        QRHelper.GetClassPDF417CodePic(stuList, WidthCount, HeightCount)
-                        : QRHelper.GetClassQrCodePic(stuList, WidthCount, HeightCount);
+                        QRHelper.GetClassPDF417CodePic(group.Students, WidthCount, HeightCount)
+                        : QRHelper.GetClassQrCodePic(group.Students, WidthCount, HeightCount);
                 });
                 Images.Clear();
                 foreach (var i in bitmaps)
@@ -113,10 +106,9 @@ namespace QRTrackerNext.ViewModels
                 if (bitmaps?.Count > 0 && await CheckPermission())
                 {
                     IsBusy = true;
+                    
                     await Task.Run(() =>
                     {
-                        var realm = Realm.GetInstance();
-                        var group = realm.Find<Group>(ObjectId.Parse(groupId));
                         var store = DependencyService.Get<IMediaStore>();
                         for (int i = 0; i < bitmaps.Count; i++)
                         {
