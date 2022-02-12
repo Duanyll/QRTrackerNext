@@ -76,6 +76,17 @@ namespace QRTrackerNext.ViewModels
                     {
                         homework.Colors.Add(i.Data);
                     }
+                    foreach (var i in homework.Groups.SelectMany(i => i.Students))
+                    {
+                        homework.Status.Add(realm.Add(new HomeworkStatus()
+                        {
+                            Student = i,
+                            Time = homework.CreationTime,
+                            Color = "grey",
+                            HasScanned = false,
+                            HomeworkId = homework.Id
+                        }));
+                    }
                 });
                 await Shell.Current.GoToAsync("..");
             }, () => !string.IsNullOrWhiteSpace(Name) && Groups.Any(i => i.Selected) && !Name.Contains(','));

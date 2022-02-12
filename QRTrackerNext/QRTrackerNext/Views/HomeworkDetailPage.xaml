@@ -48,8 +48,8 @@
                 </TableSection>
                 <TableSection Title="学生情况">
                     <TextCell TextColor="Black" Text="{Binding StudentCount, StringFormat='总共有 {0} 人应登记作业'}"></TextCell>
-                    <TextCell TextColor="Black" Text="{Binding StudentsSubmitted.Count, StringFormat='有 {0} 人已经登记'}" Tapped="TextCellSubmitted_Tapped"></TextCell>
-                    <TextCell TextColor="Black" Text="{Binding StudentsNotSubmitted.Count, StringFormat='有 {0} 人未登记'}" Tapped="TextCellNotSubmitted_Tapped"></TextCell>
+                    <TextCell TextColor="Black" Text="{Binding SubmittedStatus.Count, StringFormat='有 {0} 人已经登记'}" Tapped="TextCellSubmitted_Tapped"></TextCell>
+                    <TextCell TextColor="Black" Text="{Binding NotSubmittedStatus.Count, StringFormat='有 {0} 人未登记'}" Tapped="TextCellNotSubmitted_Tapped"></TextCell>
                 </TableSection>
                 <TableSection Title="操作">
                     <TextCell Text="开始二维码登记" Command="{Binding GoScanCommand}"></TextCell>
@@ -59,9 +59,9 @@
         </TableView>
     </ContentPage>
     <ContentPage Title="已登记学生">
-        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding ScanLogs}">
+        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding SubmittedStatus}">
             <flv:FlowListView.FlowColumnTemplate>
-                <DataTemplate x:DataType="model:ScanLog">
+                <DataTemplate x:DataType="model:HomeworkStatus">
                     <Frame BackgroundColor="{Binding Color, Converter={StaticResource strToBackground}}" 
                            CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
                         <Frame.GestureRecognizers>
@@ -76,16 +76,16 @@
         </flv:FlowListView>
     </ContentPage>
     <ContentPage Title="未登记学生">
-        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding StudentsNotSubmitted}">
+        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding NotSubmittedStatus}">
             <flv:FlowListView.FlowColumnTemplate>
-                <DataTemplate x:DataType="model:Student">
+                <DataTemplate x:DataType="model:HomeworkStatus">
                     <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=SubmitStudentCommand}"
-                                                  CommandParameter="{Binding .}"></TapGestureRecognizer>
+                                                  CommandParameter="{Binding Student}"></TapGestureRecognizer>
                         </Frame.GestureRecognizers>
                         <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
-                               Text="{Binding Name}"></Label>
+                               Text="{Binding Student.Name}"></Label>
                     </Frame>
                 </DataTemplate>
             </flv:FlowListView.FlowColumnTemplate>

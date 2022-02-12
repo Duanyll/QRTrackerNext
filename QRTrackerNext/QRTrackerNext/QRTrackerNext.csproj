@@ -27,15 +27,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.514" />
-    <PackageReference Include="DLToolkit.Forms.Controls.FlowListView" Version="2.0.11" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.2.0.562" />
     <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
-    <PackageReference Include="Realm" Version="10.3.0" />
+    <PackageReference Include="Realm" Version="10.9.0" />
     <PackageReference Include="SkiaSharp" Version="2.80.3" />
     <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.5.0" />
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2083" />  
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />  
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />  
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DLToolkit.Forms.Controls.FlowListView">
+      <HintPath>DLToolkit.Forms.Controls.FlowListView.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

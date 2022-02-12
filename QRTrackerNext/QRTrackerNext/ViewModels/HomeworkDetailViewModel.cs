@@ -11,6 +11,7 @@ using Xamarin.Forms;
 
 using QRTrackerNext.Models;
 using QRTrackerNext.Views;
+using System.Collections.Generic;
 
 namespace QRTrackerNext.ViewModels
 {
@@ -37,24 +38,18 @@ namespace QRTrackerNext.ViewModels
             }
         }
 
-        public ObservableCollection<Student> StudentsSubmitted { get; }
-        public ObservableCollection<ScanLog> ScanLogs { get; }
-        public ObservableCollection<Student> StudentsNotSubmitted { get; }
-
-        public Command LoadStudentsCommand { get; }
+        public IQueryable<HomeworkStatus> SubmittedStatus { get; set; }
+        public IQueryable<HomeworkStatus> NotSubmittedStatus { get; set; }
 
         public Command GoScanCommand { get; }
         public Command SearchStudentCommand { get; }
         public Command<Student> SubmitStudentCommand { get; }
-        public Command<ScanLog> EditScanLogCommand { get; }
+        public Command<HomeworkStatus> EditScanLogCommand { get; }
 
         public HomeworkDetailViewModel(string homeworkId)
         {
             realm = Services.RealmManager.OpenDefault();
             Homework = realm.Find<Homework>(ObjectId.Parse(homeworkId));
-            StudentsSubmitted = new ObservableCollection<Student>();
-            StudentsNotSubmitted = new ObservableCollection<Student>();
-            ScanLogs = new ObservableCollection<ScanLog>();
             if (homework == null)
             {
                 Title = "作业未找到";
@@ -62,58 +57,19 @@ namespace QRTrackerNext.ViewModels
             }
             Title = homework.Name;
 
-            var allStudents = homework.Groups.SelectMany(i => i.Students);
-            var submittedStudents = homework.Scans.Select(i => i.Student);
-            var studentsNotSubmitted = allStudents.Where(i => !submittedStudents.Contains(i));
+            var statusIndex = new Dictionary<ObjectId, HomeworkStatus>();
+            var allStudents = new List<Student>();
+            foreach (var status in homework.Status)
+            {
+                if (status.Student == null) continue;
+                statusIndex.Add(status.Student.Id, status);
+                allStudents.Add(status.Student);
+            }
+            StudentCount = allStudents.Count;
+            SubmittedStatus = realm.All<HomeworkStatus>().Where(i => i.HomeworkId == homework.Id && i.HasScanned);
+            NotSubmittedStatus = realm.All<HomeworkStatus>().Where(i => i.HomeworkId == homework.Id && !i.HasScanned);
             var colors = homework.Colors.ToList();
             var convertor = new ColorChineseNameConvertor();
-
-            ScanLog addScanLog(Student student)
-            {
-                if (studentsNotSubmitted.Contains(student))
-                {
-                    ScanLog res = null;
-                    realm.Write(() =>
-                    {
-                        var scan = realm.Add(new ScanLog()
-                        {
-                            Student = student
-                        });
-                        homework.Scans.Add(scan);
-                        res = scan;
-                    });
-                    return res;
-                }
-                else
-                {
-                    return homework.Scans.First(i => i.Student.Id == student.Id);
-                }
-            }
-
-            LoadStudentsCommand = new Command(() =>
-            {
-                StudentCount = allStudents.Count();
-
-                StudentsSubmitted.Clear();
-                foreach (var i in submittedStudents)
-                {
-                    StudentsSubmitted.Add(i);
-                }
-
-                StudentsNotSubmitted.Clear();
-                foreach (var i in studentsNotSubmitted)
-                {
-                    StudentsNotSubmitted.Add(i);
-                }
-
-                ScanLogs.Clear();
-                foreach (var i in homework.Scans)
-                {
-                    ScanLogs.Add(i);
-                }
-
-                IsBusy = false;
-            });
 
             GoScanCommand = new Command(() =>
             {
@@ -121,20 +77,23 @@ namespace QRTrackerNext.ViewModels
                 csPage.OnScanResult += (result) =>
                 {
                     var res = QRHelper.ParseStudentUri(result.Text);
-                    var student = realm.Find<Student>(res);
-                    if (student != null && allStudents.Contains(student))
+                    if (statusIndex.TryGetValue(res, out HomeworkStatus status))
                     {
-                        var scanLog = addScanLog(student);
-                        csPage.ScanSuccess(student.Name);
+                        csPage.ScanSuccess(status.Student.Name);
+                        realm.Write(() =>
+                        {
+                            status.HasScanned = true;
+                            status.Time = DateTimeOffset.Now;
+                        });
                         if (colors.Count > 0)
                         {
                             csPage.RequestRateLastScan((color) =>
                             {
                                 realm.Write(() =>
                                 {
-                                    scanLog.Color = color;
+                                    status.Color = color;
                                 });
-                                UserDialogs.Instance.Toast($"已将 {student.Name} 登记为 {convertor.Convert(color, null, null, null)}", new TimeSpan(0, 0, 3));
+                                UserDialogs.Instance.Toast($"已将 {status.Student.Name} 登记为 {convertor.Convert(color, null, null, null)}", new TimeSpan(0, 0, 3));
                             });
                         }
                     }
@@ -146,28 +105,6 @@ namespace QRTrackerNext.ViewModels
 
                 Shell.Current.Navigation.PushAsync(csPage);
             });
-
-            async void dialogSubmitStudent(Student student)
-            {
-                var scanLog = addScanLog(student);
-                if (colors.Count > 0)
-                {
-                    var color = convertor.ConvertBack(
-                            await UserDialogs.Instance.ActionSheetAsync("选择登记颜色", "不标记颜色", null, null,
-                                colors.Select(i => convertor.Convert(i, null, null, null) as string).ToArray()),
-                            null, null, null) as string;
-                    realm.Write(() =>
-                    {
-                        scanLog.Color = color;
-                    });
-                    UserDialogs.Instance.Toast($"已登记 {student.Name}, 颜色为 { convertor.Convert(color, null, null, null) }", new TimeSpan(0, 0, 3));
-                }
-                else
-                {
-                    UserDialogs.Instance.Toast($"已登记 {student.Name}", new TimeSpan(0, 0, 3));
-                }
-                LoadStudentsCommand.Execute(null);
-            }
 
             SearchStudentCommand = new Command(async () =>
             {
@@ -181,67 +118,79 @@ namespace QRTrackerNext.ViewModels
                         var student = students.Find(i => i.Name == res2);
                         if (student != null)
                         {
-                            if (studentsNotSubmitted.Contains(student))
+                            if (statusIndex[student.Id].HasScanned)
                             {
-                                SubmitStudentCommand.Execute(student);
-                            } 
+                                EditScanLogCommand.Execute(homework.Status.First(i => i.Student.Id == student.Id));
+                            }
                             else
                             {
-                                EditScanLogCommand.Execute(homework.Scans.First(i => i.Student.Id == student.Id));
+                                SubmitStudentCommand.Execute(student);
                             }
                         }
                     }
                     else
                     {
-                        await UserDialogs.Instance.AlertAsync($"没有找到名称包含 {res1.Text.Trim()} 的学生!", "查找失败");
+                        await UserDialogs.Instance.AlertAsync($"没有找到名称包含 {res1.Text.Trim()} 的学生.", "查找失败");
                     }
                 }
             });
 
             SubmitStudentCommand = new Command<Student>(async (student) =>
             {
-                if (await UserDialogs.Instance.ConfirmAsync($"要登记 {student.Name} 吗?", $"{student.Name} 还没有登记"))
+                if (statusIndex.TryGetValue(student.Id, out HomeworkStatus status))
                 {
-                    dialogSubmitStudent(student);
+                    if (await UserDialogs.Instance.ConfirmAsync($"要登记 {student.Name} 吗?", $"{student.Name} 还没有登记"))
+                    {
+                        realm.Write(() =>
+                        {
+                            status.HasScanned = true;
+                            status.Time = DateTimeOffset.Now;
+                        });
+                        if (colors.Count > 0)
+                        {
+                            var color = convertor.ConvertBack(
+                                    await UserDialogs.Instance.ActionSheetAsync("选择登记颜色", "不标记颜色", null, null,
+                                        colors.Select(i => convertor.Convert(i, null, null, null) as string).ToArray()),
+                                    null, null, null) as string;
+                            realm.Write(() =>
+                            {
+                                status.Color = color;
+                            });
+                            UserDialogs.Instance.Toast($"已登记 {student.Name}, 颜色为 { convertor.Convert(color, null, null, null) }", new TimeSpan(0, 0, 3));
+                        }
+                        else
+                        {
+                            UserDialogs.Instance.Toast($"已登记 {student.Name}", new TimeSpan(0, 0, 3));
+                        }
+                    }
                 }
             });
 
-            EditScanLogCommand = new Command<ScanLog>(async (scanLog) =>
+            EditScanLogCommand = new Command<HomeworkStatus>(async (status) =>
             {
                 if (colors.Count > 0)
                 {
                     var res = await UserDialogs.Instance.ActionSheetAsync(
-                        $"{scanLog.Student.Name} 已登记为 {convertor.Convert(scanLog.Color, null, null, null)}", "好", "删除登记", null,
+                        $"{status.Student.Name} 已登记为 {convertor.Convert(status.Color, null, null, null)}", "好", "删除登记", null,
                         colors.Select(i => convertor.Convert(i, null, null, null) as string).ToArray());
                     if (res == "删除登记")
                     {
-                        UserDialogs.Instance.Toast($"已删除 {scanLog.Student.Name} 登记的作业", new TimeSpan(0, 0, 3));
-                        realm.Write(() =>
-                        {
-                            realm.Remove(scanLog);
-                        });
+                        UserDialogs.Instance.Toast($"已删除 {status.Student.Name} 登记的作业", new TimeSpan(0, 0, 3));
+                        realm.Write(() => status.HasScanned = false);
                     }
                     else if (!string.IsNullOrEmpty(res) && res != "好")
                     {
                         var color = convertor.ConvertBack(res, null, null, null) as string;
-                        realm.Write(() =>
-                        {
-                            scanLog.Color = color;
-                        });
-                        UserDialogs.Instance.Toast($"已将 {scanLog.Student.Name} 的颜色改为 { convertor.Convert(color, null, null, null) }", new TimeSpan(0, 0, 3));
+                        realm.Write(() => status.Color = color);
+                        UserDialogs.Instance.Toast($"已将 {status.Student.Name} 的颜色改为 { convertor.Convert(color, null, null, null) }", new TimeSpan(0, 0, 3));
                     }
-                    LoadStudentsCommand.Execute(null);
                 }
                 else
                 {
-                    if (await UserDialogs.Instance.ConfirmAsync($"要删除 {scanLog.Student.Name} 登记的作业吗", $"{scanLog.Student.Name} 已经登记了"))
+                    if (await UserDialogs.Instance.ConfirmAsync($"要删除 {status.Student.Name} 登记的作业吗", $"{status.Student.Name} 已经登记了"))
                     {
-                        UserDialogs.Instance.Toast($"已删除 {scanLog.Student.Name} 登记的作业", new TimeSpan(0, 0, 3));
-                        realm.Write(() =>
-                        {
-                            realm.Remove(scanLog);
-                        });
-                        LoadStudentsCommand.Execute(null);
+                        UserDialogs.Instance.Toast($"已删除 {status.Student.Name} 登记的作业", new TimeSpan(0, 0, 3));
+                        realm.Write(() => status.HasScanned = false);
                     }
                 }
             });
@@ -249,7 +198,6 @@ namespace QRTrackerNext.ViewModels
 
         public void OnAppearing()
         {
-            LoadStudentsCommand.Execute(null);
         }
     }
 }

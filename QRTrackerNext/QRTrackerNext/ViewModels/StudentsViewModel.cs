@@ -232,7 +232,7 @@ namespace QRTrackerNext.ViewModels
                 if (result)
                     realm.Write(() =>
                     {
-                        var scanLogs = realm.All<ScanLog>().Where(i => i.Student == student);
+                        var scanLogs = realm.All<HomeworkStatus>().Where(i => i.Student == student);
                         realm.RemoveRange(scanLogs);
                         realm.Remove(student);
                     });

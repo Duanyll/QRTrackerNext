@@ -18,6 +18,9 @@ namespace QRTrackerNext.Models
 
         [Backlink(nameof(Models.Group.Students))]
         public IQueryable<Group> Group { get; }
+
+        [Backlink(nameof(HomeworkStatus.Student))]
+        public IQueryable<HomeworkStatus> Homeworks { get; }
     } 
 
     class Group : RealmObject
@@ -35,11 +38,18 @@ namespace QRTrackerNext.Models
         public IQueryable<Homework> Homeworks { get; }
     }
 
-    class ScanLog : RealmObject
+    class HomeworkStatus : RealmObject
     {
+        [PrimaryKey]
+        [MapTo("_id")]
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public Student Student { get; set; }
-        public DateTimeOffset Time { get; set; } = DateTimeOffset.Now;
+        public DateTimeOffset Time { get; set; }
         public string Color { get; set; } = "grey";
+        [Indexed]
+        public ObjectId HomeworkId { get; set; }
+        [Indexed]
+        public bool HasScanned { get; set; } = false;
     }
 
     class Homework : RealmObject
@@ -53,8 +63,9 @@ namespace QRTrackerNext.Models
 
         [Indexed]
         public string Name { get; set; }
+        public string Notes { get; set; } = string.Empty;
         public IList<Group> Groups { get; }
-        public IList<ScanLog> Scans { get; }
+        public IList<HomeworkStatus> Status { get; }
 
         public IList<string> Colors { get; }
     }

@@ -186,9 +186,12 @@ namespace QRTrackerNext.Models
             var stateMap = homeworks.Select(cur =>
             {
                 var map = new Dictionary<ObjectId, string>();
-                foreach (var i in cur.Scans)
+                foreach (var i in cur.Status)
                 {
-                    map.Add(i.Student.Id, colorNames[i.Color ?? "grey"]);
+                    if (i.HasScanned)
+                    {
+                        map.Add(i.Student.Id, colorNames[i.Color ?? "grey"]);
+                    }
                 }
                 return map;
             });

@@ -20,12 +20,9 @@ namespace QRTrackerNext.Views
         {
             set
             {
-                BindingContext = viewModel = new HomeworkDetailViewModel(value);
-                viewModel.LoadStudentsCommand.Execute(null);
+                BindingContext = new HomeworkDetailViewModel(value);
             }
         }
-
-        HomeworkDetailViewModel viewModel;
 
         public HomeworkDetailPage()
         {
@@ -34,7 +31,6 @@ namespace QRTrackerNext.Views
 
         private void TabbedPage_Appearing(object sender, EventArgs e)
         {
-            viewModel.LoadStudentsCommand.Execute(null);
         }
 
         private void TextCellSubmitted_Tapped(object sender, EventArgs e)

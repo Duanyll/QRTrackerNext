@@ -49,7 +49,7 @@ namespace QRTrackerNext.ViewModels
                 if (result)
                     realm.Write(() =>
                     {
-                        foreach (var i in homework.Scans)
+                        foreach (var i in homework.Status)
                         {
                             realm.Remove(i);
                         }
