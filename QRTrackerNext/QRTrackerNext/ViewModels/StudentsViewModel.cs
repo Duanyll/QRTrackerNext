@@ -30,8 +30,7 @@ namespace QRTrackerNext.ViewModels
             }
         }
 
-        public ObservableCollection<Student> Students { get; }
-        public Command LoadStudentsCommand { get; }
+        public IQueryable<Student> Students { get; }
         public Command AddStudentCommand { get; }
         public Command ImportStudentCommand { get; }
         public Command ExportStudentCommand { get; }
@@ -59,39 +58,15 @@ namespace QRTrackerNext.ViewModels
         {
             GroupId = groupId;
             realm = Services.RealmManager.OpenDefault();
+            var parsedId = ObjectId.Parse(groupId);
             group = realm.Find<Group>(ObjectId.Parse(groupId));
-            Students = new ObservableCollection<Student>();
             if (group == null)
             {
                 Title = "班级未找到";
                 return;
             }
             Title = group.Name;
-            LoadStudentsCommand = new Command(() =>
-            {
-                IsBusy = true;
-                try
-                {
-                    if (group == null)
-                    {
-                        return;
-                    }
-                    Students.Clear();
-                    var studentsQuery = group.Students.OrderBy(i => i.Name);
-                    foreach (var i in studentsQuery)
-                    {
-                        Students.Add(i);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            });
+            Students = realm.All<Student>().Where(i => i.GroupId == parsedId);
             AddStudentCommand = new Command(async () =>
             {
                 var result = await UserDialogs.Instance.PromptAsync("请输入新建学生名称", "新建学生");
@@ -246,25 +221,6 @@ namespace QRTrackerNext.ViewModels
             {
                 await Shell.Current.GoToAsync($"{nameof(GroupStatsPage)}?groupId={groupId}");
             });
-        }
-
-        private IDisposable realmToken;
-        public void OnAppearing()
-        {
-            selectedStudent = null;
-            realmToken = group?.Students.SubscribeForNotifications((sender, changes, error) =>
-            {
-                if (error != null)
-                {
-                    Debug.WriteLine(error);
-                }
-                LoadStudentsCommand.Execute(null);
-            });
-        }
-
-        public void OnDisappearing()
-        {
-            realmToken?.Dispose();
         }
 
         async void OnStudentSelected(Student student)

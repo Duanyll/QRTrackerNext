@@ -16,7 +16,7 @@
         <ToolbarItem Text="打印二维码" Command="{Binding ShowGroupQrCommand}" Order="Secondary"></ToolbarItem>
         <ToolbarItem Text="导出学生" Command="{Binding ExportStudentCommand}" Order="Secondary"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <ListView ItemsSource="{Binding Students}" RefreshCommand="{Binding LoadStudentsCommand}" IsRefreshing="{Binding IsBusy}" IsPullToRefreshEnabled="True" SelectionMode="None">
+    <ListView ItemsSource="{Binding Students}" IsRefreshing="{Binding IsBusy}" SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="model:Student">
                 <TextCell Text="{Binding Name}" Detail="{Binding Id}" 

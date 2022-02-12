@@ -16,7 +16,7 @@ namespace QRTrackerNext.Services
         {
             if (oldSchemaVersion < 1)
             {
-                Console.WriteLine("Migration to version 1: nothing has to be done.");
+                Console.WriteLine("Migrate to version 1: nothing has to be done.");
             }
             if (oldSchemaVersion < 2)
             {
@@ -56,17 +56,26 @@ namespace QRTrackerNext.Services
                     }
                 }
             }
+            if (oldSchemaVersion < 3)
+            {
+                Console.WriteLine("Migrate to version 3: Add Student to Group link.");
+                var groups = migration.NewRealm.All<Group>();
+                foreach (var group in groups)
+                {
+                    foreach (var student in group.Students)
+                    {
+                        student.GroupId = group.Id;
+                    }
+                }
+            }
         }
 
         public static Realm OpenDefault()
         {
             return Realm.GetInstance(new RealmConfiguration()
             {
-                SchemaVersion = 2,
-                MigrationCallback = RealmMigrationCallback,
-#if DEBUG
-                ShouldDeleteIfMigrationNeeded = true
-#endif
+                SchemaVersion = 3,
+                MigrationCallback = RealmMigrationCallback
             });
         }
     }

@@ -16,8 +16,7 @@ namespace QRTrackerNext.Models
         [Indexed]
         public string Name { get; set; }
 
-        [Backlink(nameof(Models.Group.Students))]
-        public IQueryable<Group> Group { get; }
+        public ObjectId GroupId { get; set; }
 
         [Backlink(nameof(HomeworkStatus.Student))]
         public IQueryable<HomeworkStatus> Homeworks { get; }

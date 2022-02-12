@@ -22,7 +22,6 @@ namespace QRTrackerNext.Views
             set
             {
                 BindingContext = viewModel = new StudentsViewModel(value);
-                viewModel.OnAppearing();
             }
         }
 
@@ -34,12 +33,10 @@ namespace QRTrackerNext.Views
 
         private void BrowseStudentsPage_Appearing(object sender, EventArgs e)
         {
-            viewModel?.OnAppearing();
         }
 
         private void BrowseStudentsPage_Disappearing(object sender, EventArgs e)
         {
-            viewModel?.OnDisappearing();
         }
     }
 }
