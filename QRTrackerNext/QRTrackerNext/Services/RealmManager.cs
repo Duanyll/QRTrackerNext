@@ -45,9 +45,9 @@ namespace QRTrackerNext.Services
                         statusIndex.Add(student.Id, status);
                     }
 
-                    foreach (var scanLog in oldHomework.ScanLog)
+                    foreach (var scanLog in oldHomework.Scans)
                     {
-                        if (statusIndex.TryGetValue(scanLog.Student.Id, out HomeworkStatus status))
+                        if (statusIndex.TryGetValue(scanLog.Student._id, out HomeworkStatus status))
                         {
                             status.Color = scanLog.Color;
                             status.Time = scanLog.Time;

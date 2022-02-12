@@ -38,12 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DLToolkit.Forms.Controls.FlowListView">
-      <HintPath>DLToolkit.Forms.Controls.FlowListView.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Views\GroupQrPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

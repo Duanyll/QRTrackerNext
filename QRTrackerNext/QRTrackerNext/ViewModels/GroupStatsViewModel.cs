@@ -77,13 +77,13 @@ namespace QRTrackerNext.ViewModels
                 {
                     var groupName = group.Name;
                     var homeworkIds = Homeworks.Where(i => i.Selected).OrderBy(i => i.Data.CreationTime).Select(i => i.Data.Id).ToArray();
-                    await Task.Run(async () =>
+                    await Task.Run(() =>
                     {
                         var csv = QRHelper.ExportStatsCSV(ObjectId.Parse(groupId), homeworkIds);
                         var store = DependencyService.Get<IMediaStore>();
                         var path = store.SaveCSV(csv, $"{groupName}-{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.csv");
-                        UserDialogs.Instance.Toast("已保存到 /sdcard/Documents/QRTracker", new TimeSpan(0, 0, 5));
                     });
+                    UserDialogs.Instance.Toast("已保存到 /sdcard/Documents/QRTracker", new TimeSpan(0, 0, 5));
                 }
                 IsBusy = false;
             }, () => !IsBusy && Homeworks.Any(i => i.Selected));

@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
             x:Class="QRTrackerNext.Views.HomeworkDetailPage"
             Title="{Binding Title}"
             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
@@ -59,36 +58,37 @@
         </TableView>
     </ContentPage>
     <ContentPage Title="已登记学生">
-        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding SubmittedStatus}">
-            <flv:FlowListView.FlowColumnTemplate>
+        <CollectionView ItemsSource="{Binding SubmittedStatus}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="5" VerticalItemSpacing="5"></GridItemsLayout>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:HomeworkStatus">
-                    <Frame BackgroundColor="{Binding Color, Converter={StaticResource strToBackground}}" 
-                           CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                    <Frame BackgroundColor="{Binding Color, Converter={StaticResource strToBackground}}" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
                         <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=EditScanLogCommand}"
-                                                  CommandParameter="{Binding .}"></TapGestureRecognizer>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=EditScanLogCommand}" CommandParameter="{Binding .}"></TapGestureRecognizer>
                         </Frame.GestureRecognizers>
-                        <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
-                               Text="{Binding Student.Name}"></Label>
+                        <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Text="{Binding Student.Name}"></Label>
                     </Frame>
                 </DataTemplate>
-            </flv:FlowListView.FlowColumnTemplate>
-        </flv:FlowListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </ContentPage>
     <ContentPage Title="未登记学生">
-        <flv:FlowListView FlowColumnCount="4" SeparatorVisibility="Default" FlowItemsSource="{Binding NotSubmittedStatus}">
-            <flv:FlowListView.FlowColumnTemplate>
+        <CollectionView ItemsSource="{Binding NotSubmittedStatus}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="5" VerticalItemSpacing="5"></GridItemsLayout>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:HomeworkStatus">
                     <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
                         <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=SubmitStudentCommand}"
-                                                  CommandParameter="{Binding Student}"></TapGestureRecognizer>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkDetailViewModel}}, Path=SubmitStudentCommand}" CommandParameter="{Binding Student}"></TapGestureRecognizer>
                         </Frame.GestureRecognizers>
-                        <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
-                               Text="{Binding Student.Name}"></Label>
+                        <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Text="{Binding Student.Name}"></Label>
                     </Frame>
                 </DataTemplate>
-            </flv:FlowListView.FlowColumnTemplate>
-        </flv:FlowListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </ContentPage>
 </TabbedPage>
