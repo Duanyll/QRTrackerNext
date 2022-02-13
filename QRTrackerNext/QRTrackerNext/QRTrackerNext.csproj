@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="Acr.UserDialogs" Version="7.2.0.562" />
+    <PackageReference Include="Microcharts.Forms" Version="0.9.5.9" />
     <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
     <PackageReference Include="Realm" Version="10.9.0" />
     <PackageReference Include="SkiaSharp" Version="2.80.3" />

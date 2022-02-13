@@ -12,6 +12,7 @@ using Xamarin.Forms;
 using QRTrackerNext.Models;
 using QRTrackerNext.Views;
 using System.Collections.Generic;
+using Microcharts;
 
 namespace QRTrackerNext.ViewModels
 {
@@ -196,8 +197,73 @@ namespace QRTrackerNext.ViewModels
             });
         }
 
-        public void OnAppearing()
+        public IEnumerable<ChartEntry> GetStatsChartEntry()
         {
+            int submittedCount = SubmittedStatus.Count();
+            int notSubmittedCount = NotSubmittedStatus.Count();
+            if (homework.Colors.Count == 0)
+            {
+                return new ChartEntry[]
+                {
+                    new ChartEntry(submittedCount)
+                    {
+                        Label = "已登记",
+                        ValueLabel = "green",
+                        Color = SkiaSharp.SKColors.LimeGreen
+                    },
+                    new ChartEntry(notSubmittedCount)
+                    {
+                        Label = "未登记",
+                        ValueLabel = "grey",
+                        Color = SkiaSharp.SKColors.LightGray
+                    }
+                };
+            }
+            else
+            {
+                var colorCount = new Dictionary<string, int>()
+                {
+                    {"grey", 0 },
+                    {"green" , 0 },
+                    {"yellow", 0 },
+                    {"red", 0 },
+                    {"blue", 0 },
+                    {"purple", 0 }
+                };
+                foreach (var status in SubmittedStatus)
+                {
+                    colorCount[status.Color]++;
+                }
+                var res = new List<ChartEntry>()
+                {
+                    new ChartEntry(notSubmittedCount)
+                    {
+                        Label = "未登记",
+                        ValueLabel = "grey",
+                        Color = SkiaSharp.SKColors.LightGray
+                    }
+                };
+                if (colorCount["grey"] > 0)
+                {
+                    res.Add(new ChartEntry(colorCount["grey"]) {
+                        Label = "未标记颜色",
+                        ValueLabel = "grey",
+                        Color = SkiaSharp.SKColors.Gray
+                    });
+                }
+                var col = new StringToAccentColorConvertor();
+                var name = new ColorChineseNameConvertor();
+                foreach (var color in homework.Colors)
+                {
+                    res.Add(new ChartEntry(colorCount[color])
+                    {
+                        Label = (string)name.Convert(color, null, null, null),
+                        ValueLabel = color,
+                        Color = SkiaSharp.SKColor.Parse(((Color)col.Convert(color, null, null, null)).ToHex())
+                    }); 
+                }
+                return res;
+            }
         }
     }
 }

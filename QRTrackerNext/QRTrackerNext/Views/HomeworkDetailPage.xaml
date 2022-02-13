@@ -7,6 +7,8 @@
             xmlns:model="clr-namespace:QRTrackerNext.Models"
             x:DataType="local:HomeworkDetailViewModel"
             Appearing="TabbedPage_Appearing"
+            xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
+            xmlns:charts="clr-namespace:Microcharts;assembly=Microcharts" 
             x:Name="homeworkDetailPage">
     <!--Pages can be added as references or inline-->
     <ContentPage Title="总览">
@@ -90,5 +92,37 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+    </ContentPage>
+    <ContentPage x:Name="StatsPage" Title="统计" Appearing="StatsPage_Appearing">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="240"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <microcharts:ChartView x:Name="statsChartView" Grid.Row="0">
+            </microcharts:ChartView>
+            <CollectionView x:Name="statsLabelCollectionView" Grid.Row="1" Margin="5">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10"></GridItemsLayout>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="charts:ChartEntry">
+                        <Frame BackgroundColor="{Binding ValueLabel, Converter={StaticResource strToBackground}}">
+                            <Label Style="{DynamicResource ListItemTextStyle}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <FormattedString.Spans>
+                                            <Span Text="{Binding Label}"></Span>
+                                            <Span Text=" "></Span>
+                                            <Span Text="{Binding Value}" FontAttributes="Bold"></Span>
+                                        </FormattedString.Spans>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </ContentPage>
 </TabbedPage>
