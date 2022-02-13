@@ -67,8 +67,12 @@ namespace QRTrackerNext.ViewModels
                 allStudents.Add(status.Student);
             }
             StudentCount = allStudents.Count;
-            SubmittedStatus = realm.All<HomeworkStatus>().Where(i => i.HomeworkId == homework.Id && i.HasScanned);
-            NotSubmittedStatus = realm.All<HomeworkStatus>().Where(i => i.HomeworkId == homework.Id && !i.HasScanned);
+            SubmittedStatus = realm.All<HomeworkStatus>()
+                .Where(i => i.HomeworkId == homework.Id && i.HasScanned)
+                .OrderBy(i => i.Student.NamePinyin);
+            NotSubmittedStatus = realm.All<HomeworkStatus>()
+                .Where(i => i.HomeworkId == homework.Id && !i.HasScanned)
+                .OrderBy(i => i.Student.NamePinyin);
             var colors = homework.Colors.ToList();
             var convertor = new ColorChineseNameConvertor();
 

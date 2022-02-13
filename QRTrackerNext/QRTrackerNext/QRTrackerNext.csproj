@@ -32,6 +32,7 @@
     <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
     <PackageReference Include="Realm" Version="10.9.0" />
     <PackageReference Include="SkiaSharp" Version="2.80.3" />
+    <PackageReference Include="TinyPinyin.Core.Standard" Version="1.0.0" />
     <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.5.0" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />  

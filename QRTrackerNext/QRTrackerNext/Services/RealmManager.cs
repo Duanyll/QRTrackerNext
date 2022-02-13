@@ -4,6 +4,7 @@ using System.Text;
 
 using Realms;
 using MongoDB.Bson;
+using TinyPinyin.Core;
 
 using QRTrackerNext.Models;
 using System.Linq;
@@ -68,13 +69,25 @@ namespace QRTrackerNext.Services
                     }
                 }
             }
+            if (oldSchemaVersion < 4)
+            {
+                Console.WriteLine("Migrate to version 4: Add Pinyin sorting for Student and Group");
+                foreach (var student in migration.NewRealm.All<Student>())
+                {
+                    student.NamePinyin = PinyinHelper.GetPinyin(student.Name);
+                }
+                foreach (var group in migration.NewRealm.All<Group>())
+                {
+                    group.NamePinyin = PinyinHelper.GetPinyin(group.Name);
+                }
+            }
         }
 
         public static Realm OpenDefault()
         {
             return Realm.GetInstance(new RealmConfiguration()
             {
-                SchemaVersion = 3,
+                SchemaVersion = 4,
                 MigrationCallback = RealmMigrationCallback
             });
         }

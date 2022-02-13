@@ -7,6 +7,7 @@ using System.Linq;
 using Realms;
 using MongoDB.Bson;
 using Acr.UserDialogs;
+using TinyPinyin.Core;
 
 using Xamarin.Forms;
 using Xamarin.Essentials;
@@ -66,7 +67,7 @@ namespace QRTrackerNext.ViewModels
                 return;
             }
             Title = group.Name;
-            Students = realm.All<Student>().Where(i => i.GroupId == parsedId);
+            Students = realm.All<Student>().Where(i => i.GroupId == parsedId).OrderBy(i => i.NamePinyin);
             AddStudentCommand = new Command(async () =>
             {
                 var result = await UserDialogs.Instance.PromptAsync("请输入新建学生名称", "新建学生");
@@ -81,7 +82,8 @@ namespace QRTrackerNext.ViewModels
                     {
                         var student = new Student()
                         {
-                            Name = result.Text.Trim()
+                            Name = result.Text.Trim(),
+                            NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim()),
                         };
                         realm.Add(student);
                         group.Students.Add(student);
@@ -147,13 +149,13 @@ namespace QRTrackerNext.ViewModels
                             {
                                 foreach (var name in newNames)
                                 {
-                                    var student = new Student() { Name = name };
+                                    var student = new Student() { Name = name, NamePinyin = PinyinHelper.GetPinyin(name) };
                                     realm.Add(student);
                                     group.Students.Add(student);
                                 }
                                 foreach (var (name, id) in existedNames)
                                 {
-                                    var student = new Student { Name = name, Id = id };
+                                    var student = new Student { Name = name, Id = id, NamePinyin = PinyinHelper.GetPinyin(name) };
                                     realm.Add(student);
                                     group.Students.Add(student);
                                 }
@@ -198,6 +200,7 @@ namespace QRTrackerNext.ViewModels
                     realm.Write(() =>
                     {
                         student.Name = result.Text.Trim();
+                        student.NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim());
                     });
                 }
             });

@@ -7,6 +7,7 @@ using Realms;
 using Acr.UserDialogs;
 
 using Xamarin.Forms;
+using TinyPinyin.Core;
 
 using QRTrackerNext.Models;
 using QRTrackerNext.Views;
@@ -38,7 +39,7 @@ namespace QRTrackerNext.ViewModels
         {
             realm = Services.RealmManager.OpenDefault();
             Title = "所有班级";
-            Groups = realm.All<Group>().OrderBy(i => i.Name);
+            Groups = realm.All<Group>().OrderBy(i => i.NamePinyin);
             AddGroupCommand = new Command(async () =>
             {
                 var result = await UserDialogs.Instance.PromptAsync("请输入新建班级名称", "新建班级");
@@ -53,7 +54,8 @@ namespace QRTrackerNext.ViewModels
                     {
                         realm.Add(new Group()
                         {
-                            Name = result.Text.Trim()
+                            Name = result.Text.Trim(),
+                            NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim()),
                         });
 
                     });
@@ -72,6 +74,7 @@ namespace QRTrackerNext.ViewModels
                     realm.Write(() =>
                     {
                         group.Name = result.Text.Trim();
+                        group.NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim());
                     });
                 }
             });

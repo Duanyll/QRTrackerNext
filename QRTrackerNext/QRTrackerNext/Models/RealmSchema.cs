@@ -16,6 +16,9 @@ namespace QRTrackerNext.Models
         [Indexed]
         public string Name { get; set; }
 
+        [Indexed]
+        public string NamePinyin { get; set; }
+
         public ObjectId GroupId { get; set; }
 
         [Backlink(nameof(HomeworkStatus.Student))]
@@ -30,6 +33,9 @@ namespace QRTrackerNext.Models
 
         [Indexed]
         public string Name { get; set; }
+
+        [Indexed]
+        public string NamePinyin { get; set; }
 
         public IList<Student> Students { get; }
 
