@@ -30,6 +30,7 @@ namespace QRTrackerNext.ViewModels
 
         public Command SelectAllCommand { get; }
         public Command SelectNoneCommand { get; }
+        public Command SelectDefaultTimeRange { get; }
 
         public Command ExportCSVCommand { get; }
 
@@ -51,7 +52,7 @@ namespace QRTrackerNext.ViewModels
             Homeworks = new ObservableCollection<SelectableHomework>();
             foreach (var i in group.Homeworks.OrderByDescending(i => i.CreationTime))
             {
-                Homeworks.Add(new SelectableHomework(i) { Selected = true });
+                Homeworks.Add(new SelectableHomework(i) { Selected = true }); 
             }
 
             SelectAllCommand = new Command(() =>
@@ -67,6 +68,40 @@ namespace QRTrackerNext.ViewModels
                 foreach (var i in Homeworks)
                 {
                     i.Selected = false;
+                }
+            });
+
+            SelectDefaultTimeRange = new Command(async () =>
+            {
+                var rangeConfigured = false;
+                var rangeStart = DateTimeOffset.MinValue;
+                var rangeEnd = DateTimeOffset.Now + TimeSpan.FromDays(1);
+                if (Preferences.Get("use_stats_date_begin", false))
+                {
+                    rangeStart = Preferences.Get("stats_date_begin", rangeStart.LocalDateTime);
+                    rangeConfigured = true;
+                }
+                if (Preferences.Get("use_stats_date_end", false))
+                {
+                    rangeEnd = Preferences.Get("stats_date_end", rangeEnd.LocalDateTime);
+                    rangeConfigured = true;
+                }
+                if (!rangeConfigured)
+                {
+                    await UserDialogs.Instance.AlertAsync("您可以在设置页面设置学期时间", "未设置学期", "确定");
+                }
+                else
+                {
+                    var hasSelected = false;
+                    foreach (var i in Homeworks)
+                    {
+                        i.Selected = (i.Data.CreationTime >= rangeStart && i.Data.CreationTime <= rangeEnd);
+                        if (i.Selected) hasSelected = true;
+                    }
+                    if (!hasSelected)
+                    {
+                        await UserDialogs.Instance.AlertAsync("请确认学期时间设置正确", "学期内没有作业", "确定");
+                    }
                 }
             });
 

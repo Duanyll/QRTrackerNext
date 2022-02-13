@@ -10,6 +10,7 @@
         <ToolbarItem Text="导出CSV" Command="{Binding ExportCSVCommand}"></ToolbarItem>
         <ToolbarItem Text="全选" Order="Secondary" Command="{Binding SelectAllCommand}"></ToolbarItem>
         <ToolbarItem Text="全不选" Order="Secondary" Command="{Binding SelectNoneCommand}"></ToolbarItem>
+        <ToolbarItem Text="选择本学期" Order="Secondary" Command="{Binding SelectDefaultTimeRange}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <ListView ItemsSource="{Binding Homeworks}" SelectionMode="None" RowHeight="45" VerticalScrollBarVisibility="Never">
