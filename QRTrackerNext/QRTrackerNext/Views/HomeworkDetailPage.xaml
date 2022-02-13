@@ -38,7 +38,7 @@
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate x:DataType="x:String">
                                         <Ellipse HeightRequest="20" WidthRequest="20" Margin="0, 0, 5, 0"
-                                                 BackgroundColor="{Binding ., Converter={StaticResource strToAccent}}"></Ellipse>
+                                                 Fill="{Binding ., Converter={StaticResource strToAccent}}"></Ellipse>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
                             </FlexLayout>
@@ -58,7 +58,7 @@
         </TableView>
     </ContentPage>
     <ContentPage Title="已登记学生">
-        <CollectionView ItemsSource="{Binding SubmittedStatus}">
+        <CollectionView ItemsSource="{Binding SubmittedStatus}" Margin="5">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="5" VerticalItemSpacing="5"></GridItemsLayout>
             </CollectionView.ItemsLayout>
@@ -75,7 +75,7 @@
         </CollectionView>
     </ContentPage>
     <ContentPage Title="未登记学生">
-        <CollectionView ItemsSource="{Binding NotSubmittedStatus}">
+        <CollectionView ItemsSource="{Binding NotSubmittedStatus}" Margin="5">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="5" VerticalItemSpacing="5"></GridItemsLayout>
             </CollectionView.ItemsLayout>

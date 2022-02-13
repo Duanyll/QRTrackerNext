@@ -30,7 +30,7 @@ namespace QRTrackerNext.ViewModels
         public Command AddGroupCommand { get; }
         public Command<Group> UpdateGroupCommand { get; }
         public Command<Group> RemoveGroupCommand { get; }
-        public Command<Group> GroupTapped { get; }
+        public Command<Group> OpenGroupCommand { get; }
 
         private Realm realm;
 
@@ -95,7 +95,7 @@ namespace QRTrackerNext.ViewModels
                     });
                 }
             });
-            GroupTapped = new Command<Group>(OnGroupSelected);
+            OpenGroupCommand = new Command<Group>(OnGroupSelected);
         }
 
         async void OnGroupSelected(Group group)

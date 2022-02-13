@@ -7,6 +7,7 @@ using Android.OS;
 using ZXing.Mobile;
 using Plugin.CurrentActivity;
 using Acr.UserDialogs;
+using AndroidX.AppCompat.App;
 
 #if DEBUG
 [assembly: Application(Debuggable = true)]
@@ -32,6 +33,8 @@ namespace QRTrackerNext.Droid
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             MobileBarcodeScanner.Initialize(Application);
             UserDialogs.Init(this);
+
+            AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
 
             LoadApplication(new App());
         }
