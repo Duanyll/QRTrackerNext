@@ -38,6 +38,9 @@
                             <Label Text="作业类型"></Label>
                             <Frame BackgroundColor="LightBlue" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5" HorizontalOptions="Start">
                                 <Label Text="{Binding Homework.Type.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding EditHomeworkTypeCommand}"></TapGestureRecognizer>
+                                </Frame.GestureRecognizers>
                             </Frame>
                         </StackLayout>
                     </ViewCell>

@@ -18,9 +18,19 @@ namespace QRTrackerNext.Models
 
         static Dictionary<string, ColorData> _colorData;
         static Dictionary<string, string> _chineseToName;
+        public static string[] allColors;
 
         static LabelUtils()
         {
+            allColors = new string[]
+            {
+                "red",
+                "yellow",
+                "green",
+                "blue",
+                "purple"
+            };
+
             _colorData = new Dictionary<string, ColorData>()
             {
                 ["noCheck"] = new ColorData()

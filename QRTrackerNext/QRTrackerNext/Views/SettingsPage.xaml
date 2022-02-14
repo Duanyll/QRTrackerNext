@@ -9,13 +9,6 @@
     <ContentPage.Content>
         <TableView>
             <TableView.Root>
-                <TableSection Title="颜色名称">
-                    <EntryCell Label="红色" Text="{Binding NameRed}"></EntryCell>
-                    <EntryCell Label="黄色" Text="{Binding NameYellow}"></EntryCell>
-                    <EntryCell Label="绿色" Text="{Binding NameGreen}"></EntryCell>
-                    <EntryCell Label="蓝色" Text="{Binding NameBlue}"></EntryCell>
-                    <EntryCell Label="紫色" Text="{Binding NamePurple}"></EntryCell>
-                </TableSection>
                 <TableSection Title="学期设置">
                     <SwitchCell Text="设置学期起始日期" On="{Binding UseStatsDateBegin}"></SwitchCell>
                     <ViewCell>

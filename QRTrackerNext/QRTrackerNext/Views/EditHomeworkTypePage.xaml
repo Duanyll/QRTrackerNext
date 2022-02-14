@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.EditHomeworkTypePage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:EditHomeworkTypeViewModel">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="保存" Command="{Binding SaveAndExitCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <TableView HasUnevenRows="True">
+            <TableRoot>
+                <TableSection Title="信息">
+                    <EntryCell Label="名称" Text="{Binding Name}"></EntryCell>
+                </TableSection>
+                <TableSection Title="标记含义">
+                    <TextCell TextColor="Black" Text="设置标注状态的注释，可在导出统计结果时使用"></TextCell>
+                    <EntryCell Label="未登记" Text="{Binding NotCheckedDescription}"></EntryCell>
+                    <EntryCell Label="已登记，无颜色" Text="{Binding NoColorDescription}"></EntryCell>
+                </TableSection>
+                <TableSection Title="颜色含义">
+                    <TextCell TextColor="Black" Text="设置颜色标注的注释，可在导出统计结果时使用"></TextCell>
+                    <ViewCell>
+                        <StackLayout BindableLayout.ItemsSource="{Binding Colors}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="local:ColorConfig">
+                                    <Grid Padding="15, 5" MinimumHeightRequest="45">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"></RowDefinition>
+                                            <RowDefinition Height="1*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Label Text="{Binding ColorName, Converter={StaticResource colToChinese}}" VerticalOptions="Center" HorizontalOptions="Start"></Label>
+                                        <Switch IsToggled="{Binding IsEnabled}" 
+                                                    ThumbColor="{Binding ColorName, Converter={StaticResource strToAccent}}" 
+                                                    OnColor="{Binding ColorName, Converter={StaticResource strToBackground}}"
+                                                    VerticalOptions="Center" HorizontalOptions="End"></Switch>
+                                        <Entry Grid.Row="1" VerticalOptions="Center" HorizontalOptions="FillAndExpand" 
+                                                   Text="{Binding Description}" IsEnabled="{Binding IsEnabled}"></Entry>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ViewCell>
+                </TableSection>
+            </TableRoot>
+        </TableView>
+    </ContentPage.Content>
+</ContentPage>

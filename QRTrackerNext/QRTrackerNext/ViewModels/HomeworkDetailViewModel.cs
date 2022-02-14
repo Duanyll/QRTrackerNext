@@ -46,6 +46,7 @@ namespace QRTrackerNext.ViewModels
         public Command SearchStudentCommand { get; }
         public Command<Student> SubmitStudentCommand { get; }
         public Command<HomeworkStatus> EditScanLogCommand { get; }
+        public Command EditHomeworkTypeCommand { get; }
 
         public HomeworkDetailViewModel(string homeworkId)
         {
@@ -196,6 +197,11 @@ namespace QRTrackerNext.ViewModels
                         realm.Write(() => status.HasScanned = false);
                     }
                 }
+            });
+
+            EditHomeworkTypeCommand = new Command(async () =>
+            {
+                await Shell.Current.GoToAsync($"{nameof(EditHomeworkTypePage)}?typeId={homework.Type.Id}");
             });
         }
 
