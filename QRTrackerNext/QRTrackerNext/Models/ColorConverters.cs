@@ -7,28 +7,117 @@ using Xamarin.Essentials;
 
 namespace QRTrackerNext.Models
 {
-    class StringToAccentColorConvertor : IValueConverter
+    static class LabelUtils
     {
-        static Dictionary<string, Color> strToCol = new Dictionary<string, Color>()
+        class ColorData
         {
-            { "red", Color.FromHex("#FF6558") },
-            { "yellow", Color.FromHex("#FFD600") },
-            { "green", Color.FromHex("#00C853") },
-            { "blue", Color.FromHex("#5498F9") },
-            { "purple", Color.FromHex("#D56BF0") },
-            { "grey", Color.LightGray }
-        };
+            public string ChineseName { get; set; }
+            public string AccentColorHex { get; set; }
+            public string BackgroundColorHex { get; set; }
+        }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        static Dictionary<string, ColorData> _colorData;
+        static Dictionary<string, string> _chineseToName;
+
+        static LabelUtils()
         {
-            if (strToCol.TryGetValue(value.ToString(), out var res))
+            _colorData = new Dictionary<string, ColorData>()
+            {
+                ["noCheck"] = new ColorData()
+                {
+                    ChineseName = "未登记",
+                    AccentColorHex = "#D3D3D3",
+                    BackgroundColorHex = "#D3D3D3"
+                },
+                ["gray"] = new ColorData()
+                {
+                    ChineseName = "灰色",
+                    AccentColorHex = "#778899",
+                    BackgroundColorHex = "#D3D3D3"
+                },
+                ["red"] = new ColorData()
+                {
+                    ChineseName = "红色",
+                    AccentColorHex = "#FF6558",
+                    BackgroundColorHex = "#FF8A80",
+                },
+                ["yellow"] = new ColorData()
+                {
+                    ChineseName = "黄色",
+                    AccentColorHex = "#FFD600",
+                    BackgroundColorHex = "#FFD600",
+                },
+                ["green"] = new ColorData()
+                {
+                    ChineseName = "绿色",
+                    AccentColorHex = "#00C853",
+                    BackgroundColorHex = "#00E676"
+                },
+                ["blue"] = new ColorData()
+                {
+                    ChineseName = "蓝色",
+                    AccentColorHex = "#5498F9",
+                    BackgroundColorHex = "#90CAF9"
+                },
+                ["purple"] = new ColorData()
+                {
+                    ChineseName = "紫色",
+                    AccentColorHex = "#D56BF0",
+                    BackgroundColorHex = "#CE93D8"
+                }
+            };
+            _chineseToName = new Dictionary<string, string>();
+            foreach (var pair in _colorData)
+            {
+                _chineseToName[pair.Value.ChineseName] = pair.Key;
+            }
+        }
+
+        public static Color NameToAccentXFColor(string colorName)
+        {
+            return Color.FromHex(_colorData[colorName].AccentColorHex);
+        }
+
+        public static SkiaSharp.SKColor NameToAccentSKColor(string colorName)
+        {
+            return SkiaSharp.SKColor.Parse(_colorData[colorName].AccentColorHex);
+        }
+
+        public static Color NameToBackgroundXFColor(string colorName)
+        {
+            return Color.FromHex(_colorData[colorName].BackgroundColorHex);
+        }
+
+        public static string NameToChineseDisplay(string colorName, HomeworkType type = null)
+        {
+            if ((type?.ColorDescriptions.TryGetValue(colorName, out var description) ?? false) && !string.IsNullOrEmpty(description))
+            {
+                return _colorData[colorName].ChineseName + ": " + description;
+            }
+            else
+            {
+                return _colorData[colorName].ChineseName;
+            }
+        }
+
+        public static string ChineseDisplayToName(string chinese)
+        {
+            if (_chineseToName.TryGetValue(chinese.ToString().Split(':')[0], out var res))
             {
                 return res;
             }
             else
             {
-                return Color.LightGray;
+                return "gray";
             }
+        }
+    }
+
+    class StringToAccentColorConvertor : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return LabelUtils.NameToAccentXFColor(value as string);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -39,26 +128,9 @@ namespace QRTrackerNext.Models
 
     class StringToBackgroundColorConvertor : IValueConverter
     {
-        static Dictionary<string, Color> strToCol = new Dictionary<string, Color>()
-        {
-            { "red", Color.FromHex("#FF8A80") },
-            { "yellow", Color.FromHex("#FFD600") },
-            { "green", Color.FromHex("#00E676") },
-            { "blue", Color.FromHex("#90CAF9") },
-            { "purple", Color.FromHex("#CE93D8") },
-            { "grey", Color.WhiteSmoke }
-        };
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (strToCol.TryGetValue(value.ToString(), out var res))
-            {
-                return res;
-            }
-            else
-            {
-                return Color.WhiteSmoke;
-            }
+            return LabelUtils.NameToBackgroundXFColor(value as string);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -69,53 +141,14 @@ namespace QRTrackerNext.Models
 
     class ColorChineseNameConvertor : IValueConverter
     {
-        static Dictionary<string, string> strToCol = new Dictionary<string, string>()
-        {
-            { "red", "红色" },
-            { "yellow", "黄色" },
-            { "green", "绿色" },
-            { "blue", "蓝色" },
-            { "purple", "紫色" },
-            { "grey", "灰色" }
-        };
-
-        static Dictionary<string, string> back = new Dictionary<string, string>()
-        {
-            { "红色", "red" },
-            { "黄色", "yellow" },
-            { "绿色", "green" },
-            { "蓝色", "blue" },
-            { "紫色", "purple" },
-            { "灰色", "grey" }
-        };
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (strToCol.TryGetValue(value.ToString(), out var res))
-            {
-                var customName = Preferences.Get($"name_{value}", null);
-                if (!string.IsNullOrWhiteSpace(customName))
-                {
-                    res = $"{res}: {customName.Trim()}";
-                }
-                return res;
-            }
-            else
-            {
-                return "灰色";
-            }
+            return LabelUtils.NameToChineseDisplay(value as string);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (back.TryGetValue(value.ToString().Split(':')[0], out var res))
-            {
-                return res;
-            }
-            else
-            {
-                return "grey";
-            }
+            return LabelUtils.ChineseDisplayToName(value as string);
         }
     }
 }

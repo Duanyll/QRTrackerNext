@@ -8,11 +8,33 @@ using TinyPinyin.Core;
 
 using QRTrackerNext.Models;
 using System.Linq;
+using Xamarin.Essentials;
 
 namespace QRTrackerNext.Services
 {
     internal class RealmManager
     {
+        static HomeworkType GetCheckOnlyHomeworkType()
+        {
+            return new HomeworkType() { Name = "登记是否完成", IsBuiltin = true };
+        }
+
+        static HomeworkType GetFullColorHomeworkType()
+        {
+            var type = new HomeworkType() { Name = "全部颜色", IsBuiltin = true };
+            type.Colors.Add("red");
+            type.Colors.Add("yellow");
+            type.Colors.Add("green");
+            type.Colors.Add("blue");
+            type.Colors.Add("purple");
+            type.ColorDescriptions.Add("red", Preferences.Get("name_red", ""));
+            type.ColorDescriptions.Add("yellow", Preferences.Get("name_yellow", ""));
+            type.ColorDescriptions.Add("green", Preferences.Get("name_green", ""));
+            type.ColorDescriptions.Add("blue", Preferences.Get("name_blue", ""));
+            type.ColorDescriptions.Add("purple", Preferences.Get("name_purple", ""));
+            return type;
+        }
+
         static void RealmMigrationCallback(Migration migration, ulong oldSchemaVersion)
         {
             if (oldSchemaVersion < 1)
@@ -38,7 +60,7 @@ namespace QRTrackerNext.Services
                         {
                             Student = student,
                             Time = newHomework.CreationTime,
-                            Color = "grey",
+                            Color = "gray",
                             HomeworkId = newHomework.Id,
                             HasScanned = false,
                         });
@@ -81,15 +103,71 @@ namespace QRTrackerNext.Services
                     group.NamePinyin = PinyinHelper.GetPinyin(group.Name);
                 }
             }
+            if (oldSchemaVersion < 5)
+            {
+                Console.WriteLine("Migrate to version 5: Add HomeworkType, fix grey typo");
+                foreach (var status in migration.NewRealm.All<HomeworkStatus>())
+                {
+                    if (status.Color == "grey")
+                    {
+                        status.Color = "gray";
+                    }
+                }
+                var checkOnly = GetCheckOnlyHomeworkType();
+                var allColor = GetFullColorHomeworkType();
+
+                migration.NewRealm.Add(checkOnly);
+                migration.NewRealm.Add(allColor);
+
+                var oldHomeworks = migration.OldRealm.DynamicApi.All("Homework");
+                var newHomeworks = migration.NewRealm.All<Homework>();
+
+                for (int i = 0; i < newHomeworks.Count(); i++)
+                {
+                    var oldHomework = oldHomeworks.ElementAt(i);
+                    var newHomework = newHomeworks.ElementAt(i);
+                    bool hasColor = false;
+                    foreach (var status in oldHomework.Status)
+                    {
+                        if (status.Color != "gray")
+                        {
+                            hasColor = true;
+                            break;
+                        }
+                    }
+
+                    if (hasColor)
+                    {
+                        newHomework.Type = allColor;
+                    } 
+                    else
+                    {
+                        newHomework.Type = checkOnly;
+                    }
+                }
+            }
         }
 
         public static Realm OpenDefault()
         {
             return Realm.GetInstance(new RealmConfiguration()
             {
-                SchemaVersion = 4,
+                SchemaVersion = 5,
                 MigrationCallback = RealmMigrationCallback
             });
+        }
+
+        public static void InitializeData()
+        {
+            var realm = OpenDefault();
+            if (realm.All<HomeworkType>().Count() < 2)
+            {
+                realm.Write(() =>
+                {
+                    realm.Add(GetCheckOnlyHomeworkType());
+                    realm.Add(GetFullColorHomeworkType());
+                });
+            }
         }
     }
 }

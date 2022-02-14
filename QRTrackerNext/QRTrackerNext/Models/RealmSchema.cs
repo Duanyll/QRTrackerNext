@@ -50,7 +50,7 @@ namespace QRTrackerNext.Models
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public Student Student { get; set; }
         public DateTimeOffset Time { get; set; }
-        public string Color { get; set; } = "grey";
+        public string Color { get; set; } = "gray";
         [Indexed]
         public ObjectId HomeworkId { get; set; }
         [Indexed]
@@ -72,6 +72,24 @@ namespace QRTrackerNext.Models
         public IList<Group> Groups { get; }
         public IList<HomeworkStatus> Status { get; }
 
+        public HomeworkType Type { get; set; }
+    }
+
+    class HomeworkType : RealmObject
+    {
+        [PrimaryKey]
+        [MapTo("_id")]
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
+
+        [Indexed]
+        public string Name { get; set; }
         public IList<string> Colors { get; }
+        public string NotCheckedDescription { get; set; } = string.Empty;
+        public string NoColorDescription { get; set; } = string.Empty;
+        public IDictionary<string, string> ColorDescriptions { get; }
+        public bool IsBuiltin { get; set; }
+
+        [Backlink(nameof(Homework.Type))]
+        public IQueryable<Homework> Homeworks { get; }
     }
 }

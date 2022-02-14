@@ -177,7 +177,7 @@ namespace QRTrackerNext.Models
                 { "green", Preferences.Get("name_green", "绿") },
                 { "blue", Preferences.Get("name_blue", "蓝") },
                 { "purple", Preferences.Get("name_purple", "紫") },
-                { "grey", "√" }
+                { "gray", "√" }
             };
 
             var realm = Services.RealmManager.OpenDefault();
@@ -190,7 +190,7 @@ namespace QRTrackerNext.Models
                 {
                     if (i.HasScanned)
                     {
-                        map.Add(i.Student.Id, colorNames[i.Color ?? "grey"]);
+                        map.Add(i.Student.Id, colorNames[i.Color ?? "gray"]);
                     }
                 }
                 return map;

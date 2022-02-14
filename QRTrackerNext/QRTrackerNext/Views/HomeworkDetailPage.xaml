@@ -35,15 +35,10 @@
                     </ViewCell>
                     <ViewCell>
                         <StackLayout Padding="15, 10, 15, 10">
-                            <Label Text="颜色标记"></Label>
-                            <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Homework.Colors}">
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate x:DataType="x:String">
-                                        <Ellipse HeightRequest="20" WidthRequest="20" Margin="0, 0, 5, 0"
-                                                 Fill="{Binding ., Converter={StaticResource strToAccent}}"></Ellipse>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </FlexLayout>
+                            <Label Text="作业类型"></Label>
+                            <Frame BackgroundColor="LightBlue" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5" HorizontalOptions="Start">
+                                <Label Text="{Binding Homework.Type.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                            </Frame>
                         </StackLayout>
                     </ViewCell>
                 </TableSection>

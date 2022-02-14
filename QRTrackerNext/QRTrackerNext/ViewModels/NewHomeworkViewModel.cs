@@ -21,11 +21,6 @@ namespace QRTrackerNext.ViewModels
         public SelectableGroup(Group group) : base(group) { }
     }
 
-    class SelectableColorName : SelectableData<string>
-    {
-        public SelectableColorName(string str) : base(str) { }
-    }
-
     class NewHomeworkViewModel : BaseViewModel
     {
         public Command CreateNewHomeworkCommand { get; }
@@ -41,40 +36,40 @@ namespace QRTrackerNext.ViewModels
         }
 
         public ObservableCollection<SelectableGroup> Groups { get; }
-        public ObservableCollection<SelectableColorName> ColorNames { get; }
+
+        public IList<string> HomeworkTypeNames { get; }
+        int selectedTypeIndex = -1;
+        public int SelectedTypeIndex
+        {
+            get => selectedTypeIndex;
+            set => SetProperty(ref selectedTypeIndex, value);
+        }
 
         public NewHomeworkViewModel()
         {
             Title = "新建作业";
             var realm = Services.RealmManager.OpenDefault();
-            var groups = realm.All<Group>().OrderBy(i => i.Name);
+            var groups = realm.All<Group>().OrderBy(i => i.NamePinyin);
             Groups = new ObservableCollection<SelectableGroup>();
             foreach (var i in groups)
             {
                 Groups.Add(new SelectableGroup(i));
             }
-
-            ColorNames = new ObservableCollection<SelectableColorName>()
-            {
-                new SelectableColorName("red") { Selected = true },
-                new SelectableColorName("yellow") { Selected = true },
-                new SelectableColorName("green") { Selected = true },
-                new SelectableColorName("blue"),
-                new SelectableColorName("purple")
-            };
+            var homeworkType = realm.All<HomeworkType>().ToList();
+            HomeworkTypeNames = homeworkType.Select(i => i.Name).ToList();
 
             CreateNewHomeworkCommand = new Command(async () =>
             {
                 realm.Write(() =>
                 {
-                    var homework = realm.Add(new Homework() { Name = Name.Trim() });
+                    var homework = realm.Add(new Homework() 
+                    { 
+                        Name = Name.Trim(), 
+                        Type = homeworkType.ElementAt(SelectedTypeIndex) 
+                    });
                     foreach (var i in Groups.Where(i => i.Selected))
                     {
                         homework.Groups.Add(i.Data);
-                    }
-                    foreach (var i in ColorNames.Where(i => i.Selected)) 
-                    {
-                        homework.Colors.Add(i.Data);
                     }
                     foreach (var i in homework.Groups.SelectMany(i => i.Students))
                     {
@@ -82,14 +77,14 @@ namespace QRTrackerNext.ViewModels
                         {
                             Student = i,
                             Time = homework.CreationTime,
-                            Color = "grey",
+                            Color = "gray",
                             HasScanned = false,
                             HomeworkId = homework.Id
                         }));
                     }
                 });
                 await Shell.Current.GoToAsync("..");
-            }, () => !string.IsNullOrWhiteSpace(Name) && Groups.Any(i => i.Selected) && !Name.Contains(','));
+            }, () => !string.IsNullOrWhiteSpace(Name) && Groups.Any(i => i.Selected) && !Name.Contains(',') && selectedTypeIndex != -1);
 
             PropertyChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();
             Groups.CollectionChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();

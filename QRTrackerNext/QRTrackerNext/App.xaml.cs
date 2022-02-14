@@ -13,6 +13,10 @@ namespace QRTrackerNext
         {
             InitializeComponent();
             VersionTracking.Track();
+            if (VersionTracking.IsFirstLaunchEver)
+            {
+                RealmManager.InitializeData();
+            }
             MainPage = new AppShell();
         }
 

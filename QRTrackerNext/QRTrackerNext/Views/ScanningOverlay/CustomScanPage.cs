@@ -9,6 +9,7 @@ using ZXing.Net.Mobile.Forms;
 using System.IO;
 using System.Reflection;
 using Acr.UserDialogs;
+using QRTrackerNext.Models;
 
 namespace QRTrackerNext.Views.ScanningOverlay
 {
@@ -95,12 +96,11 @@ namespace QRTrackerNext.Views.ScanningOverlay
             };
             if (colors != null && colors.Count > 0)
             {
-                var converter = new Models.StringToAccentColorConvertor();
                 foreach (var color in colors)
                 {
                     var button = new Button()
                     {
-                        BackgroundColor = (Color)converter.Convert(color, null, null, null),
+                        BackgroundColor = LabelUtils.NameToAccentXFColor(color),
                         WidthRequest = 50,
                         HeightRequest = 50
                     };
@@ -123,19 +123,18 @@ namespace QRTrackerNext.Views.ScanningOverlay
                     colorButtons.Children.Add(button);
                 }
 
-                var strToName = new Models.ColorChineseNameConvertor();
                 ToolbarItems.Add(new ToolbarItem()
                 {
                     Text = "设置默认颜色",
                     Command = new Command(async () =>
                     {
                         var color = await UserDialogs.Instance.ActionSheetAsync("选择默认颜色", "不设置默认颜色", null, null,
-                            colors.Select(i => strToName.Convert(i, null, null, null) as string).ToArray());
+                            colors.Select(i => LabelUtils.NameToChineseDisplay(i)).ToArray());
                         if (!string.IsNullOrEmpty(color))
                         {
                             if (color != "不设置默认颜色")
                             {
-                                defaultColor = strToName.ConvertBack(color, null, null, null) as string;
+                                defaultColor = LabelUtils.ChineseDisplayToName(color);
                                 Title = $"扫一扫 ({color})";
                             }
                             else
@@ -168,7 +167,7 @@ namespace QRTrackerNext.Views.ScanningOverlay
                 {
                     lastResult = result.Text;
                     Debug.WriteLine(result.Text);
-                    Device.BeginInvokeOnMainThread(async () =>
+                    Device.BeginInvokeOnMainThread(() =>
                     {
                         OnScanResult?.Invoke(result);
                     });

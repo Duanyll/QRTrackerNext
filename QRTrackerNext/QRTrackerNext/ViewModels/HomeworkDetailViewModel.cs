@@ -73,8 +73,7 @@ namespace QRTrackerNext.ViewModels
             NotSubmittedStatus = realm.All<HomeworkStatus>()
                 .Where(i => i.HomeworkId == homework.Id && !i.HasScanned)
                 .OrderBy(i => i.Student.NamePinyin);
-            var colors = homework.Colors.ToList();
-            var convertor = new ColorChineseNameConvertor();
+            var colors = homework.Type.Colors.ToList();
 
             GoScanCommand = new Command(() =>
             {
@@ -98,7 +97,7 @@ namespace QRTrackerNext.ViewModels
                                 {
                                     status.Color = color;
                                 });
-                                UserDialogs.Instance.Toast($"已将 {status.Student.Name} 登记为 {convertor.Convert(color, null, null, null)}", new TimeSpan(0, 0, 3));
+                                UserDialogs.Instance.Toast($"已将 {status.Student.Name} 登记为 {LabelUtils.NameToChineseDisplay(color, homework.Type)}", new TimeSpan(0, 0, 3));
                             });
                         }
                     }
@@ -153,15 +152,14 @@ namespace QRTrackerNext.ViewModels
                         });
                         if (colors.Count > 0)
                         {
-                            var color = convertor.ConvertBack(
+                            var color = LabelUtils.ChineseDisplayToName(
                                     await UserDialogs.Instance.ActionSheetAsync("选择登记颜色", "不标记颜色", null, null,
-                                        colors.Select(i => convertor.Convert(i, null, null, null) as string).ToArray()),
-                                    null, null, null) as string;
+                                        colors.Select(i => LabelUtils.NameToChineseDisplay(i, homework.Type)).ToArray()));
                             realm.Write(() =>
                             {
                                 status.Color = color;
                             });
-                            UserDialogs.Instance.Toast($"已登记 {student.Name}, 颜色为 { convertor.Convert(color, null, null, null) }", new TimeSpan(0, 0, 3));
+                            UserDialogs.Instance.Toast($"已登记 {student.Name}, 颜色为 {LabelUtils.NameToChineseDisplay(color, homework.Type)}", new TimeSpan(0, 0, 3));
                         }
                         else
                         {
@@ -176,8 +174,8 @@ namespace QRTrackerNext.ViewModels
                 if (colors.Count > 0)
                 {
                     var res = await UserDialogs.Instance.ActionSheetAsync(
-                        $"{status.Student.Name} 已登记为 {convertor.Convert(status.Color, null, null, null)}", "好", "删除登记", null,
-                        colors.Select(i => convertor.Convert(i, null, null, null) as string).ToArray());
+                        $"{status.Student.Name} 已登记为 {LabelUtils.NameToChineseDisplay(status.Color, homework.Type)}", "好", "删除登记", null,
+                        colors.Select(i => LabelUtils.NameToChineseDisplay(i, homework.Type)).ToArray());
                     if (res == "删除登记")
                     {
                         UserDialogs.Instance.Toast($"已删除 {status.Student.Name} 登记的作业", new TimeSpan(0, 0, 3));
@@ -185,9 +183,9 @@ namespace QRTrackerNext.ViewModels
                     }
                     else if (!string.IsNullOrEmpty(res) && res != "好")
                     {
-                        var color = convertor.ConvertBack(res, null, null, null) as string;
+                        var color = LabelUtils.ChineseDisplayToName(res);
                         realm.Write(() => status.Color = color);
-                        UserDialogs.Instance.Toast($"已将 {status.Student.Name} 的颜色改为 { convertor.Convert(color, null, null, null) }", new TimeSpan(0, 0, 3));
+                        UserDialogs.Instance.Toast($"已将 {status.Student.Name} 的颜色改为 {LabelUtils.NameToChineseDisplay(color, homework.Type)}", new TimeSpan(0, 0, 3));
                     }
                 }
                 else
@@ -205,21 +203,21 @@ namespace QRTrackerNext.ViewModels
         {
             int submittedCount = SubmittedStatus.Count();
             int notSubmittedCount = NotSubmittedStatus.Count();
-            if (homework.Colors.Count == 0)
+            if (homework.Type.Colors.Count == 0)
             {
                 return new ChartEntry[]
                 {
                     new ChartEntry(submittedCount)
                     {
-                        Label = "已登记",
+                        Label = string.IsNullOrEmpty(homework.Type.NotCheckedDescription) ? "已登记" : homework.Type.NotCheckedDescription,
                         ValueLabel = "green",
-                        Color = SkiaSharp.SKColors.LimeGreen
+                        Color = LabelUtils.NameToAccentSKColor("green")
                     },
                     new ChartEntry(notSubmittedCount)
                     {
-                        Label = "未登记",
-                        ValueLabel = "grey",
-                        Color = SkiaSharp.SKColors.LightGray
+                        Label = string.IsNullOrEmpty(homework.Type.NoColorDescription) ? "未登记" : homework.Type.NoColorDescription,
+                        ValueLabel = "noCheck",
+                        Color = LabelUtils.NameToAccentSKColor("noCheck")
                     }
                 };
             }
@@ -227,7 +225,7 @@ namespace QRTrackerNext.ViewModels
             {
                 var colorCount = new Dictionary<string, int>()
                 {
-                    {"grey", 0 },
+                    {"gray", 0 },
                     {"green" , 0 },
                     {"yellow", 0 },
                     {"red", 0 },
@@ -242,29 +240,28 @@ namespace QRTrackerNext.ViewModels
                 {
                     new ChartEntry(notSubmittedCount)
                     {
-                        Label = "未登记",
-                        ValueLabel = "grey",
-                        Color = SkiaSharp.SKColors.LightGray
+                        Label = string.IsNullOrEmpty(homework.Type.NoColorDescription) ? "未登记" : homework.Type.NoColorDescription,
+                        ValueLabel = "noCheck",
+                        Color = LabelUtils.NameToAccentSKColor("noCheck")
                     }
                 };
-                if (colorCount["grey"] > 0)
+                if (colorCount["gray"] > 0)
                 {
-                    res.Add(new ChartEntry(colorCount["grey"]) {
-                        Label = "未标记颜色",
-                        ValueLabel = "grey",
-                        Color = SkiaSharp.SKColors.Gray
+                    res.Add(new ChartEntry(colorCount["gray"])
+                    {
+                        Label = string.IsNullOrEmpty(homework.Type.NotCheckedDescription) ? "未标记颜色" : homework.Type.NotCheckedDescription,
+                        ValueLabel = "gray",
+                        Color = LabelUtils.NameToAccentSKColor("gray")
                     });
                 }
-                var col = new StringToAccentColorConvertor();
-                var name = new ColorChineseNameConvertor();
-                foreach (var color in homework.Colors)
+                foreach (var color in homework.Type.Colors)
                 {
                     res.Add(new ChartEntry(colorCount[color])
                     {
-                        Label = (string)name.Convert(color, null, null, null),
+                        Label = LabelUtils.NameToChineseDisplay(color, homework.Type),
                         ValueLabel = color,
-                        Color = SkiaSharp.SKColor.Parse(((Color)col.Convert(color, null, null, null)).ToHex())
-                    }); 
+                        Color = LabelUtils.NameToAccentSKColor(color)
+                    });
                 }
                 return res;
             }

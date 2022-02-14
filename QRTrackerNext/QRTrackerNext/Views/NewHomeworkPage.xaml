@@ -28,19 +28,13 @@
                         </ViewCell.View>
                     </ViewCell>
                 </TableSection>
-                <TableSection Title="标记颜色">
-                    <TextCell TextColor="Black" Text="可以选择一些颜色来标记每个学生的作业完成情况" Detail="也可以不使用标记功能"></TextCell>
+                <TableSection Title="作业类型">
+                    <TextCell TextColor="Black" Text="选择一种作业类型"></TextCell>
                     <ViewCell>
                         <ViewCell.View>
-                            <ListView ItemsSource="{Binding ColorNames}" SelectionMode="None" RowHeight="45" VerticalScrollBarVisibility="Never">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="local:SelectableColorName">
-                                        <SwitchCell Text="{Binding Data, Converter={StaticResource colToChinese}}"
-                                                    OnColor="{Binding Data, Converter={StaticResource strToAccent}}"
-                                                    On="{Binding Selected}"></SwitchCell>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                            <ContentView>
+                                <Picker Title="作业类型" ItemsSource="{Binding HomeworkTypeNames}" SelectedIndex="{Binding SelectedTypeIndex}" Margin="15, 10"></Picker>
+                            </ContentView>
                         </ViewCell.View>
                     </ViewCell>
                 </TableSection>
