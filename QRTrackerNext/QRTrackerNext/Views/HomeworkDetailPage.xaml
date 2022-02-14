@@ -18,6 +18,7 @@
         <TableView HasUnevenRows="True" Intent="Data">
             <TableView.Root>
                 <TableSection Title="作业信息">
+                    <EntryCell Label="作业名称" Text="{Binding Name}"></EntryCell>
                     <TextCell TextColor="Black" Text="{Binding Homework.CreationTime.LocalDateTime, StringFormat='创建时间 {0:f}'}"></TextCell>
                     <ViewCell>
                         <StackLayout Padding="15, 10, 15, 10">
@@ -35,13 +36,21 @@
                     </ViewCell>
                     <ViewCell>
                         <StackLayout Padding="15, 10, 15, 10">
-                            <Label Text="作业类型"></Label>
-                            <Frame BackgroundColor="LightBlue" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5" HorizontalOptions="Start">
-                                <Label Text="{Binding Homework.Type.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding EditHomeworkTypeCommand}"></TapGestureRecognizer>
-                                </Frame.GestureRecognizers>
-                            </Frame>
+                            <Label Text="作业分类"></Label>
+                            <FlexLayout Wrap="Wrap">
+                                <Frame BackgroundColor="LightBlue" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5" HorizontalOptions="Start">
+                                    <Label Text="{Binding Homework.Type.Name}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding EditHomeworkTypeCommand}"></TapGestureRecognizer>
+                                    </Frame.GestureRecognizers>
+                                </Frame>
+                                <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" HasShadow="False" Padding="5" Margin="2.5" HorizontalOptions="Start">
+                                    <Label Text="修改分类" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ChangeHomeworkTypeCommand}"></TapGestureRecognizer>
+                                    </Frame.GestureRecognizers>
+                                </Frame>
+                            </FlexLayout>
                         </StackLayout>
                     </ViewCell>
                 </TableSection>

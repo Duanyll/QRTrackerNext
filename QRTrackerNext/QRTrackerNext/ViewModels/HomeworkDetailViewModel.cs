@@ -39,6 +39,21 @@ namespace QRTrackerNext.ViewModels
             }
         }
 
+        string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (!string.IsNullOrEmpty(value) && homework != null)
+                {
+                    SetProperty(ref name, value);
+                    realm.Write(() => homework.Name = name);
+                    Title = value;
+                }
+            }
+        }
+
         public IQueryable<HomeworkStatus> SubmittedStatus { get; set; }
         public IQueryable<HomeworkStatus> NotSubmittedStatus { get; set; }
 
@@ -47,6 +62,8 @@ namespace QRTrackerNext.ViewModels
         public Command<Student> SubmitStudentCommand { get; }
         public Command<HomeworkStatus> EditScanLogCommand { get; }
         public Command EditHomeworkTypeCommand { get; }
+
+        public Command ChangeHomeworkTypeCommand { get; }
 
         public HomeworkDetailViewModel(string homeworkId)
         {
@@ -58,6 +75,7 @@ namespace QRTrackerNext.ViewModels
                 return;
             }
             Title = homework.Name;
+            name = homework.Name;
 
             var statusIndex = new Dictionary<ObjectId, HomeworkStatus>();
             var allStudents = new List<Student>();
@@ -203,6 +221,19 @@ namespace QRTrackerNext.ViewModels
             {
                 await Shell.Current.GoToAsync($"{nameof(EditHomeworkTypePage)}?typeId={homework.Type.Id}");
             });
+
+            ChangeHomeworkTypeCommand = new Command(async () =>
+            {
+                var types = realm.All<HomeworkType>().ToList();
+                var names = types.Select(x => x.Name).ToArray();
+                var res = await UserDialogs.Instance.ActionSheetAsync("选择作业分类", "取消", "", null, names);
+                var type = types.Find(i => i.Name == res);
+                if (type != null && type != homework.Type)
+                {
+                    realm.Write(() => homework.Type = type);
+                    colors = type.Colors.ToList();
+                }
+            });
         }
 
         public IEnumerable<ChartEntry> GetStatsChartEntry()
@@ -246,7 +277,7 @@ namespace QRTrackerNext.ViewModels
                 {
                     new ChartEntry(notSubmittedCount)
                     {
-                        Label = string.IsNullOrEmpty(homework.Type.NoColorDescription) ? "未登记" : homework.Type.NoColorDescription,
+                        Label = string.IsNullOrEmpty(homework.Type.NotCheckedDescription) ? "未登记" : homework.Type.NotCheckedDescription,
                         ValueLabel = "noCheck",
                         Color = LabelUtils.NameToAccentSKColor("noCheck")
                     }
@@ -255,19 +286,22 @@ namespace QRTrackerNext.ViewModels
                 {
                     res.Add(new ChartEntry(colorCount["gray"])
                     {
-                        Label = string.IsNullOrEmpty(homework.Type.NotCheckedDescription) ? "未标记颜色" : homework.Type.NotCheckedDescription,
+                        Label = string.IsNullOrEmpty(homework.Type.NoColorDescription) ? "未标记颜色" : homework.Type.NoColorDescription,
                         ValueLabel = "gray",
                         Color = LabelUtils.NameToAccentSKColor("gray")
                     });
                 }
-                foreach (var color in homework.Type.Colors)
+                foreach (var color in LabelUtils.allColors)
                 {
-                    res.Add(new ChartEntry(colorCount[color])
+                    if (colorCount[color] > 0 || homework.Type.Colors.Contains(color))
                     {
-                        Label = LabelUtils.NameToChineseDisplay(color, homework.Type),
-                        ValueLabel = color,
-                        Color = LabelUtils.NameToAccentSKColor(color)
-                    });
+                        res.Add(new ChartEntry(colorCount[color])
+                        {
+                            Label = LabelUtils.NameToChineseDisplay(color, homework.Type),
+                            ValueLabel = color,
+                            Color = LabelUtils.NameToAccentSKColor(color)
+                        });
+                    }
                 }
                 return res;
             }

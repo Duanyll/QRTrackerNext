@@ -87,6 +87,17 @@ namespace QRTrackerNext.ViewModels
 
             SaveAndExitCommand = new Command(async () =>
             {
+                if (string.IsNullOrEmpty(Name))
+                {
+                    UserDialogs.Instance.Alert("作业类型不能为空", "保存失败", "确认");
+                    return;
+                }
+                var sameName = realm.All<HomeworkType>().Where(i => i.Name == Name && i.Id != homeworkType.Id).Count();
+                if (sameName != 0)
+                {
+                    UserDialogs.Instance.Alert("已经有相同名称的作业分类了", "保存失败", "确认");
+                    return;
+                }
                 realm.Write(() =>
                 {
                     HomeworkType.Name = Name;

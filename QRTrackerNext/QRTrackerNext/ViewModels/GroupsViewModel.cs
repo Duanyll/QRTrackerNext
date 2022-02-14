@@ -50,6 +50,12 @@ namespace QRTrackerNext.ViewModels
                         await UserDialogs.Instance.AlertAsync("请输入有效的名称, 不能包含逗号", "错误");
                         return;
                     }
+                    var sameName = realm.All<Group>().Where(i => i.Name == result.Text.Trim()).Count();
+                    if (sameName != 0)
+                    {
+                        UserDialogs.Instance.Alert("已经有相同名称的班级了", "创建失败", "确认");
+                        return;
+                    }
                     realm.Write(() =>
                     {
                         realm.Add(new Group()
@@ -69,6 +75,12 @@ namespace QRTrackerNext.ViewModels
                     if (string.IsNullOrWhiteSpace(result.Text) || result.Text.Contains(','))
                     {
                         await UserDialogs.Instance.AlertAsync("请输入有效的名称, 不能包含逗号", "错误");
+                        return;
+                    }
+                    var sameName = realm.All<Group>().Where(i => i.Name == result.Text.Trim() && i.Id != group.Id).Count();
+                    if (sameName != 0) 
+                    {
+                        UserDialogs.Instance.Alert("已经有相同名称的班级了", "保存失败", "确认");
                         return;
                     }
                     realm.Write(() =>

@@ -13,6 +13,7 @@
         <TableView HasUnevenRows="True">
             <TableRoot>
                 <TableSection Title="信息">
+                    <TextCell TextColor="Black" Text="修改会影响所有此分类的作业"></TextCell>
                     <EntryCell Label="名称" Text="{Binding Name}"></EntryCell>
                 </TableSection>
                 <TableSection Title="标记含义">
