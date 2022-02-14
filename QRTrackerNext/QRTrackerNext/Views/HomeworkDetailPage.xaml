@@ -81,6 +81,14 @@
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <ContentView>
+                    <StackLayout VerticalOptions="Center">
+                        <Label Text="还没有登记学生" HorizontalOptions="Center"></Label>
+                        <Button Text="开始二维码登记" Command="{Binding GoScanCommand}" HorizontalOptions="Center"></Button>
+                    </StackLayout>
+                </ContentView>
+            </CollectionView.EmptyView>
         </CollectionView>
     </ContentPage>
     <ContentPage Title="未登记学生">
@@ -98,6 +106,13 @@
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <ContentView>
+                    <StackLayout VerticalOptions="Center">
+                        <Label Text="所有学生都登记了" HorizontalOptions="Center"></Label>
+                    </StackLayout>
+                </ContentView>
+            </CollectionView.EmptyView>
         </CollectionView>
     </ContentPage>
     <ContentPage x:Name="StatsPage" Title="统计" Appearing="StatsPage_Appearing">

@@ -11,42 +11,47 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="新建" Command="{Binding AddGroupCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Image Grid.Row="0" Source="group_page_header.jpg" Aspect="AspectFill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"></Image>
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Groups}" VerticalOptions="FillAndExpand">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical"></LinearItemsLayout>
-            </CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Group">
-                    <SwipeView>
-                        <SwipeView.LeftItems>
-                            <SwipeItems>
-                                <SwipeItem Text="重命名"
+
+    <CollectionView ItemsSource="{Binding Groups}" VerticalOptions="FillAndExpand">
+        <CollectionView.Header>
+            <Image HeightRequest="180" Source="group_page_header.jpg" Aspect="AspectFill" HorizontalOptions="FillAndExpand" VerticalOptions="Start"></Image>
+        </CollectionView.Header>
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"></LinearItemsLayout>
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="model:Group">
+                <SwipeView>
+                    <SwipeView.LeftItems>
+                        <SwipeItems>
+                            <SwipeItem Text="重命名"
                                    BackgroundColor="LightGreen"
                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=UpdateGroupCommand}"
                                    CommandParameter="{Binding .}" />
-                                <SwipeItem Text="删除"
+                            <SwipeItem Text="删除"
                                    BackgroundColor="LightPink"
                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=RemoveGroupCommand}"
                                    CommandParameter="{Binding .}" />
-                            </SwipeItems>
-                        </SwipeView.LeftItems>
-                        <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10">
-                            <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer 
+                        </SwipeItems>
+                    </SwipeView.LeftItems>
+                    <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10">
+                        <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=OpenGroupCommand}"
                                    CommandParameter="{Binding .}" />
-                            </Frame.GestureRecognizers>
-                        </Frame>
-                    </SwipeView>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </Grid>
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </SwipeView>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.EmptyView>
+            <ContentView>
+                <StackLayout VerticalOptions="Center">
+                    <Label Text="还没有班级"></Label>
+                    <Button Text="创建班级" Command="{Binding AddGroupCommand}" HorizontalOptions="Center"></Button>
+                </StackLayout>
+            </ContentView>
+        </CollectionView.EmptyView>
+    </CollectionView>
 </ContentPage>

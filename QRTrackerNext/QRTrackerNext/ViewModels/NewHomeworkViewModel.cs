@@ -60,6 +60,7 @@ namespace QRTrackerNext.ViewModels
 
             CreateNewHomeworkCommand = new Command(async () =>
             {
+                ObjectId createdId = ObjectId.Empty;
                 realm.Write(() =>
                 {
                     var homework = realm.Add(new Homework() 
@@ -82,8 +83,10 @@ namespace QRTrackerNext.ViewModels
                             HomeworkId = homework.Id
                         }));
                     }
+                    createdId = homework.Id;
                 });
                 await Shell.Current.GoToAsync("..");
+                await Shell.Current.GoToAsync($"{nameof(HomeworkDetailPage)}?homeworkId={createdId}");
             }, () => !string.IsNullOrWhiteSpace(Name) && Groups.Any(i => i.Selected) && !Name.Contains(',') && selectedTypeIndex != -1);
 
             PropertyChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();

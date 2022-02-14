@@ -31,7 +31,7 @@
 
     <TabBar>
         <ShellContent Title="班级" Icon="users.png" ContentTemplate="{DataTemplate local:GroupsPage}" />
-        <ShellContent Title="作业" Icon="book_open.png" ContentTemplate="{DataTemplate local:HomeworksPage}" />
+        <ShellContent Title="作业" Icon="book_open.png" ContentTemplate="{DataTemplate local:HomeworkHomePage}" />
         <ShellContent Title="设置" Icon="settings.png" ContentTemplate="{DataTemplate local:SettingsPage}" />
         <ShellContent Title="关于" Icon="info.png" ContentTemplate="{DataTemplate local:AboutPage}" />
     </TabBar>
