@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QRTrackerNext.Views.HomeworkTypesPage"
+             Title="{Binding Title}"
+             xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
+             xmlns:model="clr-namespace:QRTrackerNext.Models"
+             x:DataType="local:HomeworkTypesViewModel">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="新建分类" Command="{Binding AddHomeworkTypeCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <CollectionView ItemsSource="{Binding HomeworkTypes}" VerticalOptions="FillAndExpand">
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"></LinearItemsLayout>
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="model:HomeworkType">
+                <SwipeView>
+                    <SwipeView.LeftItems>
+                        <SwipeItems>
+                            <SwipeItem Text="编辑"
+                                   BackgroundColor="LightGreen"
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkTypesViewModel}}, Path=EditHomeworkTypeCommand}"
+                                   CommandParameter="{Binding .}" />
+                            <SwipeItem Text="删除"
+                                   BackgroundColor="LightPink"
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkTypesViewModel}}, Path=RemoveHomeworkTypeCommand}"
+                                   CommandParameter="{Binding .}" />
+                        </SwipeItems>
+                    </SwipeView.LeftItems>
+                    <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
+                            <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Colors}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Ellipse HeightRequest="20" WidthRequest="20" Margin="0, 0, 5, 0"
+                                                 Fill="{Binding ., Converter={StaticResource strToAccent}}"></Ellipse>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworkTypesViewModel}}, Path=OpenHomeworkListCommand}"
+                                   CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </SwipeView>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.EmptyView>
+            <ContentView>
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="还没有作业分类"></Label>
+                    <Button Text="创建分类" Command="{Binding AddHomeworkTypeCommand}" HorizontalOptions="Center"></Button>
+                </StackLayout>
+            </ContentView>
+        </CollectionView.EmptyView>
+    </CollectionView>
+</ContentPage>

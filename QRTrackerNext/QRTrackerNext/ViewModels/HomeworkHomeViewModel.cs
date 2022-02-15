@@ -39,7 +39,7 @@ namespace QRTrackerNext.ViewModels
             });
             OpenHomeworkTypeListCommand = new Command(async () =>
             {
-
+                await Shell.Current.GoToAsync(nameof(HomeworkTypesPage));
             });
             UpdateTopHomeworkCommand = new Command(() =>
             {

@@ -45,15 +45,21 @@ namespace QRTrackerNext.ViewModels
             set => SetProperty(ref selectedTypeIndex, value);
         }
 
+        Realm realm;
+
         public NewHomeworkViewModel()
         {
             Title = "新建作业";
-            var realm = Services.RealmManager.OpenDefault();
+            realm = Services.RealmManager.OpenDefault();
             var groups = realm.All<Group>().OrderBy(i => i.NamePinyin);
             Groups = new ObservableCollection<SelectableGroup>();
             foreach (var i in groups)
             {
                 Groups.Add(new SelectableGroup(i));
+            }
+            if (Groups.Count == 1)
+            {
+                Groups[0].Selected = true;
             }
             var homeworkType = realm.All<HomeworkType>().ToList();
             HomeworkTypeNames = homeworkType.Select(i => i.Name).ToList();
@@ -63,10 +69,10 @@ namespace QRTrackerNext.ViewModels
                 ObjectId createdId = ObjectId.Empty;
                 realm.Write(() =>
                 {
-                    var homework = realm.Add(new Homework() 
-                    { 
-                        Name = Name.Trim(), 
-                        Type = homeworkType.ElementAt(SelectedTypeIndex) 
+                    var homework = realm.Add(new Homework()
+                    {
+                        Name = Name.Trim(),
+                        Type = homeworkType.ElementAt(SelectedTypeIndex)
                     });
                     foreach (var i in Groups.Where(i => i.Selected))
                     {
@@ -91,6 +97,17 @@ namespace QRTrackerNext.ViewModels
 
             PropertyChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();
             Groups.CollectionChanged += (_, __) => CreateNewHomeworkCommand.ChangeCanExecute();
+        }
+
+        public void SetHomeworkTypeById(string idString)
+        {
+            if (ObjectId.TryParse(idString, out var id))
+            {
+                var homework = realm.Find<HomeworkType>(id);
+                if (homework == null) return;
+                var idx = HomeworkTypeNames.IndexOf(homework.Name);
+                if (idx != -1) SelectedTypeIndex = idx;
+            }
         }
     }
 }

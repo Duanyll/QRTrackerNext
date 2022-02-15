@@ -7,32 +7,25 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-using QRTrackerNext.Models;
 using QRTrackerNext.ViewModels;
 
 namespace QRTrackerNext.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     [QueryProperty(nameof(TypeId), "typeId")]
-    public partial class NewHomeworkPage : ContentPage
+
+    public partial class HomeworksByTypePage : ContentPage
     {
-        NewHomeworkViewModel viewModel;
         public string TypeId
         {
             set
             {
-                viewModel.SetHomeworkTypeById(value);
+                BindingContext = new HomeworksByTypeViewModel(value);
             }
         }
-        public NewHomeworkPage()
+        public HomeworksByTypePage()
         {
-            BindingContext = viewModel = new NewHomeworkViewModel();
             InitializeComponent();
-        }
-
-        private void SwitchCell_OnChanged(object sender, ToggledEventArgs e)
-        {
-            viewModel.CreateNewHomeworkCommand.ChangeCanExecute();
         }
     }
 }

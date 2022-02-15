@@ -28,12 +28,11 @@
                         </ViewCell.View>
                     </ViewCell>
                 </TableSection>
-                <TableSection Title="作业类型">
-                    <TextCell TextColor="Black" Text="选择一种作业类型"></TextCell>
+                <TableSection Title="作业分类">
                     <ViewCell>
                         <ViewCell.View>
                             <ContentView>
-                                <Picker Title="作业类型" ItemsSource="{Binding HomeworkTypeNames}" SelectedIndex="{Binding SelectedTypeIndex}" Margin="15, 10"></Picker>
+                                <Picker Title="选择作业分类" ItemsSource="{Binding HomeworkTypeNames}" SelectedIndex="{Binding SelectedTypeIndex}" Margin="15, 10"></Picker>
                             </ContentView>
                         </ViewCell.View>
                     </ViewCell>

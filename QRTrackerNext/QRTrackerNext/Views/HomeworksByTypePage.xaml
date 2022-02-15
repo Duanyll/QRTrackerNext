@@ -1,44 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QRTrackerNext.Views.GroupsPage"
-             Title="{Binding Title}"
+             x:Class="QRTrackerNext.Views.HomeworksByTypePage"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
-             x:DataType="local:GroupsViewModel"
-             Appearing="BrowseGroupsPage_Appearing"
-             Disappearing="BrowseGroupsPage_Disappearing">
+             x:DataType="local:HomeworksByTypeViewModel"
+             Title="{Binding HomeworkType.Name}">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="新建" Command="{Binding AddGroupCommand}"></ToolbarItem>
+        <ToolbarItem Text="新建作业" Command="{Binding AddHomeworkCommand}"></ToolbarItem>
+        <ToolbarItem Text="编辑分类" Command="{Binding EditHomeworkTypeCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
 
-    <CollectionView ItemsSource="{Binding Groups}" VerticalOptions="FillAndExpand">
-        <CollectionView.Header>
-            <Image HeightRequest="180" Source="group_page_header.jpg" Aspect="AspectFill" HorizontalOptions="FillAndExpand" VerticalOptions="Start"></Image>
-        </CollectionView.Header>
+    <CollectionView ItemsSource="{Binding Homeworks}" VerticalOptions="FillAndExpand">
         <CollectionView.ItemsLayout>
             <LinearItemsLayout Orientation="Vertical"></LinearItemsLayout>
         </CollectionView.ItemsLayout>
         <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="model:Group">
+            <DataTemplate x:DataType="model:Homework">
                 <SwipeView>
                     <SwipeView.LeftItems>
                         <SwipeItems>
-                            <SwipeItem Text="重命名"
-                                   BackgroundColor="LightGreen"
-                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=UpdateGroupCommand}"
-                                   CommandParameter="{Binding .}" />
                             <SwipeItem Text="删除"
                                    BackgroundColor="LightPink"
-                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=RemoveGroupCommand}"
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworksByTypeViewModel}}, Path=RemoveHomeworkCommand}"
                                    CommandParameter="{Binding .}" />
                         </SwipeItems>
                     </SwipeView.LeftItems>
                     <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10">
-                        <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
+                        <StackLayout>
+                            <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
+                            <Label Text="{Binding CreationTime.LocalDateTime, StringFormat='{0:f}'}" Style="{DynamicResource CaptionStyle}"></Label>
+                        </StackLayout>
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer 
-                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupsViewModel}}, Path=OpenGroupCommand}"
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworksByTypeViewModel}}, Path=OpenHomeworkCommand}"
                                    CommandParameter="{Binding .}" />
                         </Frame.GestureRecognizers>
                     </Frame>
@@ -48,8 +43,8 @@
         <CollectionView.EmptyView>
             <ContentView>
                 <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="还没有班级"></Label>
-                    <Button Text="创建班级" Command="{Binding AddGroupCommand}" HorizontalOptions="Center"></Button>
+                    <Label Text="这个分类还没有作业"></Label>
+                    <Button Text="创建作业" Command="{Binding AddHomeworkCommand}" HorizontalOptions="Center"></Button>
                 </StackLayout>
             </ContentView>
         </CollectionView.EmptyView>

@@ -14,14 +14,9 @@ namespace QRTrackerNext.Services
 {
     internal class RealmManager
     {
-        static HomeworkType GetCheckOnlyHomeworkType()
+        static HomeworkType GetDefaultHomeworkType()
         {
-            return new HomeworkType() { Name = "登记是否完成", IsBuiltin = true };
-        }
-
-        static HomeworkType GetFullColorHomeworkType()
-        {
-            var type = new HomeworkType() { Name = "全部颜色", IsBuiltin = true };
+            var type = new HomeworkType() { Name = "默认分类", IsBuiltin = true };
             type.Colors.Add("red");
             type.Colors.Add("yellow");
             type.Colors.Add("green");
@@ -113,37 +108,12 @@ namespace QRTrackerNext.Services
                         status.Color = "gray";
                     }
                 }
-                var checkOnly = GetCheckOnlyHomeworkType();
-                var allColor = GetFullColorHomeworkType();
+                var defaultType = GetDefaultHomeworkType();
+                migration.NewRealm.Add(defaultType);
 
-                migration.NewRealm.Add(checkOnly);
-                migration.NewRealm.Add(allColor);
-
-                var oldHomeworks = migration.OldRealm.DynamicApi.All("Homework");
-                var newHomeworks = migration.NewRealm.All<Homework>();
-
-                for (int i = 0; i < newHomeworks.Count(); i++)
+                foreach (var homework in migration.NewRealm.All<Homework>())
                 {
-                    var oldHomework = oldHomeworks.ElementAt(i);
-                    var newHomework = newHomeworks.ElementAt(i);
-                    bool hasColor = false;
-                    foreach (var status in oldHomework.Status)
-                    {
-                        if (status.Color != "gray")
-                        {
-                            hasColor = true;
-                            break;
-                        }
-                    }
-
-                    if (hasColor)
-                    {
-                        newHomework.Type = allColor;
-                    } 
-                    else
-                    {
-                        newHomework.Type = checkOnly;
-                    }
+                    homework.Type = defaultType;
                 }
             }
         }
@@ -160,12 +130,11 @@ namespace QRTrackerNext.Services
         public static void InitializeData()
         {
             var realm = OpenDefault();
-            if (realm.All<HomeworkType>().Count() < 2)
+            if (realm.All<HomeworkType>().Count() < 1)
             {
                 realm.Write(() =>
                 {
-                    realm.Add(GetCheckOnlyHomeworkType());
-                    realm.Add(GetFullColorHomeworkType());
+                    realm.Add(GetDefaultHomeworkType());
                 });
             }
         }
