@@ -65,7 +65,7 @@ namespace QRTrackerNext.ViewModels
                 return;
             }
             Title = group.Name;
-            Students = realm.All<Student>().Where(i => i.GroupId == parsedId).OrderBy(i => i.NamePinyin);
+            Students = group.Students.OrderBy(i => i.NamePinyin);
             AddStudentCommand = new Command(async () =>
             {
                 var result = await UserDialogs.Instance.PromptAsync("请输入新建学生名称", "新建学生");
@@ -82,10 +82,9 @@ namespace QRTrackerNext.ViewModels
                         {
                             Name = result.Text.Trim(),
                             NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim()),
-                            GroupId = parsedId
+                            Group = group,
                         };
                         realm.Add(student);
-                        group.Students.Add(student);
                     });
                 }
             });
@@ -148,15 +147,22 @@ namespace QRTrackerNext.ViewModels
                             {
                                 foreach (var name in newNames)
                                 {
-                                    var student = new Student() { Name = name, NamePinyin = PinyinHelper.GetPinyin(name), GroupId = parsedId };
-                                    realm.Add(student);
-                                    group.Students.Add(student);
+                                    realm.Add(new Student()
+                                    {
+                                        Name = name,
+                                        NamePinyin = PinyinHelper.GetPinyin(name),
+                                        Group = group
+                                    });
                                 }
                                 foreach (var (name, id) in existedNames)
                                 {
-                                    var student = new Student { Name = name, Id = id, NamePinyin = PinyinHelper.GetPinyin(name), GroupId = parsedId };
-                                    realm.Add(student);
-                                    group.Students.Add(student);
+                                    realm.Add(new Student()
+                                    {
+                                        Id = id,
+                                        Name = name,
+                                        NamePinyin = PinyinHelper.GetPinyin(name),
+                                        Group = group
+                                    });
                                 }
                             });
                         }

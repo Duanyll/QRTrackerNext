@@ -80,14 +80,14 @@ namespace QRTrackerNext.ViewModels
                     }
                     foreach (var i in homework.Groups.SelectMany(i => i.Students))
                     {
-                        homework.Status.Add(realm.Add(new HomeworkStatus()
+                        realm.Add(new HomeworkStatus()
                         {
                             Student = i,
                             Time = homework.CreationTime,
                             Color = "gray",
                             HasScanned = false,
-                            HomeworkId = homework.Id
-                        }));
+                            Homework = homework
+                        });
                     }
                     createdId = homework.Id;
                 });

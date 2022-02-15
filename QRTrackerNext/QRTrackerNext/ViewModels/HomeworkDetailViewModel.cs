@@ -86,12 +86,8 @@ namespace QRTrackerNext.ViewModels
                 allStudents.Add(status.Student);
             }
             StudentCount = allStudents.Count;
-            SubmittedStatus = realm.All<HomeworkStatus>()
-                .Where(i => i.HomeworkId == homework.Id && i.HasScanned)
-                .OrderBy(i => i.Student.NamePinyin);
-            NotSubmittedStatus = realm.All<HomeworkStatus>()
-                .Where(i => i.HomeworkId == homework.Id && !i.HasScanned)
-                .OrderBy(i => i.Student.NamePinyin);
+            SubmittedStatus = homework.Status.Where(i => i.HasScanned == true).AsQueryable();
+            NotSubmittedStatus = homework.Status.Where(i => i.HasScanned == false).AsQueryable();
             var colors = homework.Type.Colors.ToList();
 
             GoScanCommand = new Command(() =>

@@ -90,8 +90,8 @@ namespace QRTrackerNext.ViewModels
                 await Task.Run(() =>
                 {
                     bitmaps = UsePDF417 ?
-                        QRHelper.GetClassPDF417CodePic(group.Students, WidthCount, HeightCount)
-                        : QRHelper.GetClassQrCodePic(group.Students, WidthCount, HeightCount);
+                        QRHelper.GetClassPDF417CodePic(group.Students.ToList(), WidthCount, HeightCount)
+                        : QRHelper.GetClassQrCodePic(group.Students.ToList(), WidthCount, HeightCount);
                 });
                 Images.Clear();
                 foreach (var i in bitmaps)

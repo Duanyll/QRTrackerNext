@@ -34,61 +34,7 @@ namespace QRTrackerNext.Services
         {
             if (oldSchemaVersion < 1)
             {
-                Console.WriteLine("Migrate to version 1: nothing has to be done.");
-            }
-            if (oldSchemaVersion < 2)
-            {
-                Console.WriteLine("Migrate to version 2: Rearrange Homework status.");
-                var oldHomeworks = migration.OldRealm.DynamicApi.All("Homework");
-                var newHomeworks = migration.NewRealm.All<Homework>();
-
-                for (int i = 0; i < newHomeworks.Count(); i++)
-                {
-                    var oldHomework = oldHomeworks.ElementAt(i);
-                    var newHomework = newHomeworks.ElementAt(i);
-
-                    var students = newHomework.Groups.SelectMany(g => g.Students);
-                    var statusIndex = new Dictionary<ObjectId, HomeworkStatus>();
-                    foreach (var student in students)
-                    {
-                        var status = migration.NewRealm.Add(new HomeworkStatus()
-                        {
-                            Student = student,
-                            Time = newHomework.CreationTime,
-                            Color = "gray",
-                            HomeworkId = newHomework.Id,
-                            HasScanned = false,
-                        });
-                        newHomework.Status.Add(status);
-                        statusIndex.Add(student.Id, status);
-                    }
-
-                    foreach (var scanLog in oldHomework.Scans)
-                    {
-                        if (statusIndex.TryGetValue(scanLog.Student._id, out HomeworkStatus status))
-                        {
-                            status.Color = scanLog.Color;
-                            status.Time = scanLog.Time;
-                            status.HasScanned = true;
-                        }
-                    }
-                }
-            }
-            if (oldSchemaVersion < 3)
-            {
-                Console.WriteLine("Migrate to version 3: Add Student to Group link.");
-                var groups = migration.NewRealm.All<Group>();
-                foreach (var group in groups)
-                {
-                    foreach (var student in group.Students)
-                    {
-                        student.GroupId = group.Id;
-                    }
-                }
-            }
-            if (oldSchemaVersion < 4)
-            {
-                Console.WriteLine("Migrate to version 4: Add Pinyin sorting for Student and Group");
+                // Process Pinyin
                 foreach (var student in migration.NewRealm.All<Student>())
                 {
                     student.NamePinyin = PinyinHelper.GetPinyin(student.Name);
@@ -97,23 +43,59 @@ namespace QRTrackerNext.Services
                 {
                     group.NamePinyin = PinyinHelper.GetPinyin(group.Name);
                 }
-            }
-            if (oldSchemaVersion < 5)
-            {
-                Console.WriteLine("Migrate to version 5: Add HomeworkType, fix grey typo");
-                foreach (var status in migration.NewRealm.All<HomeworkStatus>())
+
+                // group to student => student to group
+                foreach (var oldGroup in migration.OldRealm.DynamicApi.All("Group"))
                 {
-                    if (status.Color == "grey")
+                    var groupId = (ObjectId)oldGroup._id;
+                    var newGroup = migration.NewRealm.Find<Group>(groupId);
+                    foreach (var oldStudent in oldGroup.Students)
                     {
-                        status.Color = "gray";
+                        var studentId = (ObjectId)oldStudent._id;
+                        var newStudent = migration.NewRealm.Find<Student>(studentId);
+                        newStudent.Group = newGroup;
                     }
                 }
-                var defaultType = GetDefaultHomeworkType();
-                migration.NewRealm.Add(defaultType);
 
-                foreach (var homework in migration.NewRealm.All<Homework>())
+                // create the default homework type
+                var defaultType = migration.NewRealm.Add(GetDefaultHomeworkType());
+
+                // ScanLog => HomeworkStatus
+                foreach (var newHomework in migration.NewRealm.All<Homework>())
                 {
-                    homework.Type = defaultType;
+                    newHomework.Type = defaultType;
+                    var homeworkId = newHomework.Id;
+                    var oldHomework = migration.OldRealm.DynamicApi.Find("Homework", homeworkId);
+                    var statusMap = new Dictionary<ObjectId, HomeworkStatus>();
+                    foreach (var oldGroup in oldHomework.Groups)
+                    {
+                        foreach (var oldStudent in oldGroup.Students)
+                        {
+                            var studentId = (ObjectId)oldStudent._id;
+                            var newStudent = migration.NewRealm.Find<Student>(studentId);
+                            var status = new HomeworkStatus()
+                            {
+                                Student = newStudent,
+                                Time = oldHomework.CreationTime,
+                                Color = "gray",
+                                Homework = newHomework,
+                                HasScanned = false
+                            };
+                            migration.NewRealm.Add(status);
+                            statusMap.Add(studentId, status);
+                        }
+                    }
+                    foreach (var scanLog in oldHomework.Scans)
+                    {
+                        var status = statusMap[(ObjectId)scanLog.Student._id];
+                        status.HasScanned = true;
+                        status.Time = scanLog.Time;
+                        status.Color = scanLog.Color ?? "gray";
+                        if (status.Color == "grey")
+                        {
+                            status.Color = "gray";
+                        }
+                    }
                 }
             }
         }
@@ -122,7 +104,7 @@ namespace QRTrackerNext.Services
         {
             return Realm.GetInstance(new RealmConfiguration()
             {
-                SchemaVersion = 5,
+                SchemaVersion = 1,
                 MigrationCallback = RealmMigrationCallback
             });
         }

@@ -19,7 +19,7 @@ namespace QRTrackerNext.Models
         [Indexed]
         public string NamePinyin { get; set; }
 
-        public ObjectId GroupId { get; set; }
+        public Group Group { get; set; }
 
         [Backlink(nameof(HomeworkStatus.Student))]
         public IQueryable<HomeworkStatus> Homeworks { get; }
@@ -37,7 +37,8 @@ namespace QRTrackerNext.Models
         [Indexed]
         public string NamePinyin { get; set; }
 
-        public IList<Student> Students { get; }
+        [Backlink(nameof(Student.Group))]
+        public IQueryable<Student> Students { get; }
 
         [Backlink(nameof(Homework.Groups))]
         public IQueryable<Homework> Homeworks { get; }
@@ -51,8 +52,8 @@ namespace QRTrackerNext.Models
         public Student Student { get; set; }
         public DateTimeOffset Time { get; set; }
         public string Color { get; set; } = "gray";
-        [Indexed]
-        public ObjectId HomeworkId { get; set; }
+
+        public Homework Homework { get; set; }
         [Indexed]
         public bool HasScanned { get; set; } = false;
     }
@@ -70,7 +71,9 @@ namespace QRTrackerNext.Models
         public string Name { get; set; }
         public string Notes { get; set; } = string.Empty;
         public IList<Group> Groups { get; }
-        public IList<HomeworkStatus> Status { get; }
+        
+        [Backlink(nameof(HomeworkStatus.Homework))]
+        public IQueryable<HomeworkStatus> Status { get; }
 
         public HomeworkType Type { get; set; }
     }
