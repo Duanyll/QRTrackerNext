@@ -1,15 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:zx="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
              xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable"
              x:Class="QRTrackerNext.Views.StudentDetailPage"
-             Title="{Binding Title}"
+             Title="{Binding Student.Name}"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
-             x:DataType="local:StudentDetailViewModel"
-             Shell.TabBarIsVisible="False">
-    <ContentPage.Content>
+             x:DataType="local:StudentDetailViewModel">
+    <TabbedPage.ToolbarItems>
+        <ToolbarItem Text="重命名学生" Order="Secondary" Command="{Binding RenameStudentCommand}"></ToolbarItem>
+        <ToolbarItem Text="删除学生" Order="Secondary" Command="{Binding RemoveStudentCommand}"></ToolbarItem>
+    </TabbedPage.ToolbarItems>
+    <ContentPage Title="二维码">
         <StackLayout>
             <zx:ZXingBarcodeImageView
                     BarcodeFormat="QR_CODE"
@@ -29,6 +32,23 @@
                     <zxcm:EncodingOptions Width="500" Height="300" />
                 </zx:ZXingBarcodeImageView.BarcodeOptions>
             </zx:ZXingBarcodeImageView>
+            <Label HorizontalOptions="Center" Text="二维码的外观可能不同, 但不影响扫描结果"></Label>
+            <Label HorizontalOptions="Center">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="学生 ID: "></Span>
+                            <Span Text="{Binding Student.Id}"></Span>
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+    </ContentPage>
+    <ContentPage Title="作业情况">
+        
+    </ContentPage>
+    <ContentPage Title="作业统计">
+        
+    </ContentPage>
+</TabbedPage>

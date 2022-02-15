@@ -13,7 +13,7 @@ namespace QRTrackerNext.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     [QueryProperty(nameof(StudentId), "studentId")]
-    public partial class StudentDetailPage : ContentPage
+    public partial class StudentDetailPage : TabbedPage
     {
         public string StudentId
         {

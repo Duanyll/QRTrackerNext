@@ -35,8 +35,6 @@ namespace QRTrackerNext.ViewModels
         public Command AddStudentCommand { get; }
         public Command ImportStudentCommand { get; }
         public Command ExportStudentCommand { get; }
-        public Command<Student> UpdateStudentCommand { get; }
-        public Command<Student> RemoveStudentCommand { get; }
         public Command<Student> OpenStudentCommand { get; }
 
         public Command ShowGroupQrCommand { get; }
@@ -187,34 +185,6 @@ namespace QRTrackerNext.ViewModels
                 var str = sb.ToString();
                 await Clipboard.SetTextAsync(str);
                 await UserDialogs.Instance.AlertAsync("已复制到剪贴板, 请发送到其他设备上, 成功导入后即可使用相同的二维码识别学生", "导出成功");
-            });
-            UpdateStudentCommand = new Command<Student>(async (student) =>
-            {
-                var result = await UserDialogs.Instance.PromptAsync($"将 {student.Name} 重命名为", "重命名学生");
-                if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
-                {
-                    if (string.IsNullOrWhiteSpace(result.Text) || result.Text.Contains(',') || result.Text.Contains(';'))
-                    {
-                        await UserDialogs.Instance.AlertAsync("请输入有效的名称, 不能包含逗号或分号", "错误");
-                        return;
-                    }
-                    realm.Write(() =>
-                    {
-                        student.Name = result.Text.Trim();
-                        student.NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim());
-                    });
-                }
-            });
-            RemoveStudentCommand = new Command<Student>(async (student) =>
-            {
-                var result = await UserDialogs.Instance.ConfirmAsync($"这将同时删除 {student.Name} 的所有作业记录。确定要删除 {student.Name} 吗", "删除学生");
-                if (result)
-                    realm.Write(() =>
-                    {
-                        var scanLogs = realm.All<HomeworkStatus>().Where(i => i.Student == student);
-                        realm.RemoveRange(scanLogs);
-                        realm.Remove(student);
-                    });
             });
             OpenStudentCommand = new Command<Student>(OnStudentSelected);
             ShowGroupQrCommand = new Command(async () =>
