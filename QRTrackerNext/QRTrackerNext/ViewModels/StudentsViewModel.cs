@@ -37,7 +37,7 @@ namespace QRTrackerNext.ViewModels
         public Command ExportStudentCommand { get; }
         public Command<Student> UpdateStudentCommand { get; }
         public Command<Student> RemoveStudentCommand { get; }
-        public Command<Student> StudentTapped { get; }
+        public Command<Student> OpenStudentCommand { get; }
 
         public Command ShowGroupQrCommand { get; }
         public Command ExportStatsCommand { get; }
@@ -84,6 +84,7 @@ namespace QRTrackerNext.ViewModels
                         {
                             Name = result.Text.Trim(),
                             NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim()),
+                            GroupId = parsedId
                         };
                         realm.Add(student);
                         group.Students.Add(student);
@@ -149,13 +150,13 @@ namespace QRTrackerNext.ViewModels
                             {
                                 foreach (var name in newNames)
                                 {
-                                    var student = new Student() { Name = name, NamePinyin = PinyinHelper.GetPinyin(name) };
+                                    var student = new Student() { Name = name, NamePinyin = PinyinHelper.GetPinyin(name), GroupId = parsedId };
                                     realm.Add(student);
                                     group.Students.Add(student);
                                 }
                                 foreach (var (name, id) in existedNames)
                                 {
-                                    var student = new Student { Name = name, Id = id, NamePinyin = PinyinHelper.GetPinyin(name) };
+                                    var student = new Student { Name = name, Id = id, NamePinyin = PinyinHelper.GetPinyin(name), GroupId = parsedId };
                                     realm.Add(student);
                                     group.Students.Add(student);
                                 }
@@ -215,7 +216,7 @@ namespace QRTrackerNext.ViewModels
                         realm.Remove(student);
                     });
             });
-            StudentTapped = new Command<Student>(OnStudentSelected);
+            OpenStudentCommand = new Command<Student>(OnStudentSelected);
             ShowGroupQrCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync($"{nameof(GroupQrPage)}?groupId={groupId}");

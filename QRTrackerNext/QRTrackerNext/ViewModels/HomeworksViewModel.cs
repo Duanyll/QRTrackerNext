@@ -30,7 +30,7 @@ namespace QRTrackerNext.ViewModels
         public IQueryable<Homework> Homeworks { get; }
         public Command AddHomeworkCommand { get; }
         public Command<Homework> RemoveHomeworkCommand { get; }
-        public Command<Homework> HomeworkTapped { get; }
+        public Command<Homework> OpenHomeworkCommand { get; }
 
         private Realm realm;
 
@@ -56,7 +56,7 @@ namespace QRTrackerNext.ViewModels
                         realm.Remove(homework);
                     });
             });
-            HomeworkTapped = new Command<Homework>(OnHomeworkSelected);
+            OpenHomeworkCommand = new Command<Homework>(OnHomeworkSelected);
         }
 
         async void OnHomeworkSelected(Homework homework)

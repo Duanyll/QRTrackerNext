@@ -12,20 +12,52 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="新建" Command="{Binding AddHomeworkCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <ListView ItemsSource="{Binding Homeworks}" IsRefreshing="{Binding IsBusy}" SelectionMode="None">
-        <ListView.ItemTemplate>
+    <CollectionView ItemsSource="{Binding Homeworks}">
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"></LinearItemsLayout>
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="model:Homework">
-                <TextCell Text="{Binding Name}" Detail="{Binding CreationTime.LocalDateTime, StringFormat='{0:f}'}" 
-                          Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworksViewModel}}, Path=HomeworkTapped}"
-                          CommandParameter="{Binding .}">
-                    <TextCell.ContextActions>
-                        <MenuItem Text="删除" IsDestructive="True"
-                                  Command="{Binding BindingContext.RemoveHomeworkCommand, Source={x:Reference BrowseHomeworksPage}}"
-                                  CommandParameter="{Binding .}">
-                        </MenuItem>
-                    </TextCell.ContextActions>
-                </TextCell>
+                <SwipeView>
+                    <SwipeView.LeftItems>
+                        <SwipeItems>
+                            <SwipeItem Text="删除"
+                                   BackgroundColor="LightPink"
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworksViewModel}}, Path=RemoveHomeworkCommand}"
+                                   CommandParameter="{Binding .}" />
+                        </SwipeItems>
+                    </SwipeView.LeftItems>
+                    <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10" Padding="10">
+                        <StackLayout>
+                            <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
+                            <Label Style="{DynamicResource CaptionStyle}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <FormattedString.Spans>
+                                            <Span Text="{Binding Type.Name}"></Span>
+                                            <Span Text=" - "></Span>
+                                            <Span Text="{Binding CreationTime.LocalDateTime, StringFormat='{0:f}'}"></Span>
+                                        </FormattedString.Spans>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomeworksViewModel}}, Path=OpenHomeworkCommand}"
+                                        CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </SwipeView>
             </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+        </CollectionView.ItemTemplate>
+        <CollectionView.EmptyView>
+            <ContentView>
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="还没有作业"></Label>
+                    <Button Text="创建作业" Command="{Binding AddHomeworkCommand}"></Button>
+                </StackLayout>
+            </ContentView>
+        </CollectionView.EmptyView>
+    </CollectionView>
 </ContentPage>

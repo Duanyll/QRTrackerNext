@@ -10,31 +10,34 @@
              Appearing="BrowseStudentsPage_Appearing"
              Disappearing="BrowseStudentsPage_Disappearing">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="添加学生" Command="{Binding AddStudentCommand}" Order="Secondary"></ToolbarItem>
-        <ToolbarItem Text="导入学生" Command="{Binding ImportStudentCommand}" Order="Primary"></ToolbarItem>
-        <ToolbarItem Text="统计" Command="{Binding ExportStatsCommand}" Order="Primary"></ToolbarItem>
-        <ToolbarItem Text="打印二维码" Command="{Binding ShowGroupQrCommand}" Order="Secondary"></ToolbarItem>
-        <ToolbarItem Text="导出学生" Command="{Binding ExportStudentCommand}" Order="Secondary"></ToolbarItem>
+        <ToolbarItem Text="添加单个学生" Command="{Binding AddStudentCommand}" Order="Secondary"></ToolbarItem>
+        <ToolbarItem Text="导出学生到其他设备" Command="{Binding ExportStudentCommand}" Order="Secondary"></ToolbarItem>
     </ContentPage.ToolbarItems>
-    <ListView ItemsSource="{Binding Students}" IsRefreshing="{Binding IsBusy}" SelectionMode="None">
-        <ListView.ItemTemplate>
+    <CollectionView ItemsSource="{Binding Students}" Margin="5">
+        <CollectionView.ItemsLayout>
+            <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="5" VerticalItemSpacing="5"></GridItemsLayout>
+        </CollectionView.ItemsLayout>
+        <CollectionView.Header>
+            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="Start">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Text="导入学生" Command="{Binding ImportStudentCommand}"></Button>
+                <Button Grid.Column="1" Text="打印二维码" Command="{Binding ShowGroupQrCommand}"></Button>
+                <Button Grid.Column="2" Text="导出统计表" Command="{Binding ExportStatsCommand}"></Button>
+            </Grid>
+        </CollectionView.Header>
+        <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="model:Student">
-                <TextCell Text="{Binding Name}" Detail="{Binding Id}" 
-                          Command="{Binding Source={RelativeSource AncestorType={x:Type local:StudentsViewModel}}, Path=StudentTapped}"
-                          CommandParameter="{Binding .}">
-                    <TextCell.ContextActions>
-                        <MenuItem Text="删除" IsDestructive="True"
-                                  Command="{Binding BindingContext.RemoveStudentCommand, Source={x:Reference BrowseStudentsPage}}"
-                                  CommandParameter="{Binding .}">
-                        </MenuItem>
-                        <MenuItem Text="重命名"
-                                  Command="{Binding BindingContext.UpdateStudentCommand, Source={x:Reference BrowseStudentsPage}}"
-                                  CommandParameter="{Binding .}">
-                        </MenuItem>
-                    </TextCell.ContextActions>
-                </TextCell>
-
+                <Frame BackgroundColor="WhiteSmoke" CornerRadius="5" Padding="5" Margin="5" HasShadow="False">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:StudentsViewModel}}, Path=OpenStudentCommand}" CommandParameter="{Binding .}"></TapGestureRecognizer>
+                    </Frame.GestureRecognizers>
+                    <Label HorizontalOptions="Fill" VerticalOptions="Fill" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Text="{Binding Name}"></Label>
+                </Frame>
             </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
