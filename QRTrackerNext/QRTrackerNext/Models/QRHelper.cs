@@ -172,11 +172,11 @@ namespace QRTrackerNext.Models
         {
             var colorNames = new Dictionary<string, string>()
             {
-                { "red", Preferences.Get("name_red", "红") },
-                { "yellow", Preferences.Get("name_yellow", "黄") },
-                { "green", Preferences.Get("name_green", "绿") },
-                { "blue", Preferences.Get("name_blue", "蓝") },
-                { "purple", Preferences.Get("name_purple", "紫") },
+                { "red", "红" },
+                { "yellow", "黄" },
+                { "green", "绿" },
+                { "blue", "蓝" },
+                { "purple", "紫" },
                 { "gray", "√" }
             };
 
@@ -188,10 +188,28 @@ namespace QRTrackerNext.Models
                 var map = new Dictionary<ObjectId, string>();
                 foreach (var i in cur.Status)
                 {
-                    if (i.HasScanned)
+                    var type = cur.Type;
+                    string text;
+                    if (!i.HasScanned)
                     {
-                        map.Add(i.Student.Id, colorNames[i.Color ?? "gray"]);
+                        text = type.NotCheckedDescription ?? "";
                     }
+                    else if (type.Colors.Count == 0)
+                    {
+                        text = "√";
+                    }
+                    else if (i.Color == "gray")
+                    {
+                        text = string.IsNullOrEmpty(type.NoColorDescription) ? "√" : type.NoColorDescription;
+                    }
+                    else
+                    {
+                        if (!type.ColorDescriptions.TryGetValue(i.Color, out text) || string.IsNullOrEmpty(text))
+                        {
+                            text = colorNames[i.Color];
+                        }
+                    }
+                    map.Add(i.Student.Id, text);
                 }
                 return map;
             });

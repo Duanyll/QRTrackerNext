@@ -7,7 +7,9 @@
              Title="{Binding Student.Name}"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
-             x:DataType="local:StudentDetailViewModel">
+             x:DataType="local:StudentDetailViewModel"
+             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
+             xmlns:charts="clr-namespace:Microcharts;assembly=Microcharts">
     <TabbedPage.ToolbarItems>
         <ToolbarItem Text="重命名学生" Order="Secondary" Command="{Binding RenameStudentCommand}"></ToolbarItem>
         <ToolbarItem Text="删除学生" Order="Secondary" Command="{Binding RemoveStudentCommand}"></ToolbarItem>
@@ -46,9 +48,69 @@
         </StackLayout>
     </ContentPage>
     <ContentPage Title="作业情况">
-        
+        <StackLayout>
+            <Picker Title="选择作业分类" ItemsSource="{Binding HomeworkTypeNames}" SelectedIndex="{Binding SelectedTypeIndex}"></Picker>
+            <CollectionView ItemsSource="{Binding SelectedStatus}" Margin="10">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"></LinearItemsLayout>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:HomeworkStatus">
+                        <Frame BackgroundColor="{Binding Color, Converter={StaticResource strToBackground}}" Margin="5" CornerRadius="10" Padding="10">
+                            <StackLayout>
+                                <Label Text="{Binding Homework.Name}" Style="{DynamicResource SubtitleStyle}"></Label>
+                                <Label Style="{DynamicResource CaptionStyle}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <FormattedString.Spans>
+                                                <Span Text="{Binding Homework.Type.Name}"></Span>
+                                                <Span Text=" - "></Span>
+                                                <Span Text="{Binding ., Converter={StaticResource statusToChinese}}"></Span>
+                                            </FormattedString.Spans>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
     </ContentPage>
     <ContentPage Title="作业统计">
-        
+        <StackLayout>
+            <Picker Title="选择作业分类" ItemsSource="{Binding HomeworkTypeNames}" SelectedIndex="{Binding SelectedTypeIndex}"></Picker>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="240"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <microcharts:ChartView Grid.Row="0" x:Name="statsChart">
+                </microcharts:ChartView>
+                <CollectionView ItemsSource="{Binding ChartEntries}" Grid.Row="1" Margin="5">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10"></GridItemsLayout>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="charts:ChartEntry">
+                            <Frame BackgroundColor="{Binding ValueLabel, Converter={StaticResource strToBackground}}">
+                                <Label Style="{DynamicResource ListItemTextStyle}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <FormattedString.Spans>
+                                                <Span Text="{Binding Label}"></Span>
+                                                <Span Text=" "></Span>
+                                                <Span Text="{Binding Value}" FontAttributes="Bold"></Span>
+                                            </FormattedString.Spans>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </StackLayout>
     </ContentPage>
 </TabbedPage>

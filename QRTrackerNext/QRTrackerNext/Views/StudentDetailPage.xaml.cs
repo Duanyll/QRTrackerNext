@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+using Microcharts;
+
 using QRTrackerNext.ViewModels;
 
 namespace QRTrackerNext.Views
@@ -20,6 +22,15 @@ namespace QRTrackerNext.Views
             set
             {
                 BindingContext = viewModel = new StudentDetailViewModel(value);
+                viewModel.UpdateChart = () =>
+                {
+                    statsChart.Chart = new PieChart
+                    {
+                        LabelMode = LabelMode.None,
+                        IsAnimated = true,
+                        Entries = viewModel.ChartEntries
+                    };
+                };
             }
         }
 

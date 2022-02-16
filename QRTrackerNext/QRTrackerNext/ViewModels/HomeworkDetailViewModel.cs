@@ -86,8 +86,8 @@ namespace QRTrackerNext.ViewModels
                 allStudents.Add(status.Student);
             }
             StudentCount = allStudents.Count;
-            SubmittedStatus = homework.Status.Where(i => i.HasScanned == true).AsQueryable();
-            NotSubmittedStatus = homework.Status.Where(i => i.HasScanned == false).AsQueryable();
+            SubmittedStatus = homework.Status.Where(i => i.HasScanned == true).OrderBy(i => i.Student.NamePinyin).AsQueryable();
+            NotSubmittedStatus = homework.Status.Where(i => i.HasScanned == false).OrderBy(i => i.Student.NamePinyin).AsQueryable();
             var colors = homework.Type.Colors.ToList();
 
             GoScanCommand = new Command(() =>
@@ -234,73 +234,7 @@ namespace QRTrackerNext.ViewModels
 
         public IEnumerable<ChartEntry> GetStatsChartEntry()
         {
-            int submittedCount = SubmittedStatus.Count();
-            int notSubmittedCount = NotSubmittedStatus.Count();
-            if (homework.Type.Colors.Count == 0)
-            {
-                return new ChartEntry[]
-                {
-                    new ChartEntry(submittedCount)
-                    {
-                        Label = string.IsNullOrEmpty(homework.Type.NotCheckedDescription) ? "已登记" : homework.Type.NotCheckedDescription,
-                        ValueLabel = "green",
-                        Color = LabelUtils.NameToAccentSKColor("green")
-                    },
-                    new ChartEntry(notSubmittedCount)
-                    {
-                        Label = string.IsNullOrEmpty(homework.Type.NoColorDescription) ? "未登记" : homework.Type.NoColorDescription,
-                        ValueLabel = "noCheck",
-                        Color = LabelUtils.NameToAccentSKColor("noCheck")
-                    }
-                };
-            }
-            else
-            {
-                var colorCount = new Dictionary<string, int>()
-                {
-                    {"gray", 0 },
-                    {"green" , 0 },
-                    {"yellow", 0 },
-                    {"red", 0 },
-                    {"blue", 0 },
-                    {"purple", 0 }
-                };
-                foreach (var status in SubmittedStatus)
-                {
-                    colorCount[status.Color]++;
-                }
-                var res = new List<ChartEntry>()
-                {
-                    new ChartEntry(notSubmittedCount)
-                    {
-                        Label = string.IsNullOrEmpty(homework.Type.NotCheckedDescription) ? "未登记" : homework.Type.NotCheckedDescription,
-                        ValueLabel = "noCheck",
-                        Color = LabelUtils.NameToAccentSKColor("noCheck")
-                    }
-                };
-                if (colorCount["gray"] > 0)
-                {
-                    res.Add(new ChartEntry(colorCount["gray"])
-                    {
-                        Label = string.IsNullOrEmpty(homework.Type.NoColorDescription) ? "未标记颜色" : homework.Type.NoColorDescription,
-                        ValueLabel = "gray",
-                        Color = LabelUtils.NameToAccentSKColor("gray")
-                    });
-                }
-                foreach (var color in LabelUtils.allColors)
-                {
-                    if (colorCount[color] > 0 || homework.Type.Colors.Contains(color))
-                    {
-                        res.Add(new ChartEntry(colorCount[color])
-                        {
-                            Label = LabelUtils.NameToChineseDisplay(color, homework.Type),
-                            ValueLabel = color,
-                            Color = LabelUtils.NameToAccentSKColor(color)
-                        });
-                    }
-                }
-                return res;
-            }
+            return ChartUtils.GetHomeworkStatusPieChartEntries(homework.Status, homework.Type);
         }
     }
 }

@@ -32,6 +32,7 @@
             <model:StringToAccentColorConvertor x:Key="strToAccent"></model:StringToAccentColorConvertor>
             <model:StringToBackgroundColorConvertor x:Key="strToBackground"></model:StringToBackgroundColorConvertor>
             <model:ColorChineseNameConvertor x:Key="colToChinese"></model:ColorChineseNameConvertor>
+            <model:StatusToDescribeStringConvertor x:Key="statusToChinese"></model:StatusToDescribeStringConvertor>
         </ResourceDictionary>        
     </Application.Resources>
 </Application>

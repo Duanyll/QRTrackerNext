@@ -161,4 +161,31 @@ namespace QRTrackerNext.Models
             return LabelUtils.ChineseDisplayToName(value as string);
         }
     }
+
+    class StatusToDescribeStringConvertor : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            var status = (HomeworkStatus)value;
+            var type = status.Homework.Type;
+            if (!status.HasScanned)
+            {
+                return string.IsNullOrEmpty(type.NotCheckedDescription) ? "未登记" : type.NotCheckedDescription;
+            }
+            else if (status.Color == "gray")
+            {
+                return string.IsNullOrEmpty(type.NoColorDescription) ? "未标记颜色" : type.NoColorDescription;
+            }
+            else
+            {
+                return LabelUtils.NameToChineseDisplay(status.Color, type);
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
 }

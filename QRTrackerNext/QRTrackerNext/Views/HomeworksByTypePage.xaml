@@ -26,7 +26,7 @@
                                    CommandParameter="{Binding .}" />
                         </SwipeItems>
                     </SwipeView.LeftItems>
-                    <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10">
+                    <Frame BackgroundColor="GhostWhite" Margin="5" CornerRadius="10" Padding="10">
                         <StackLayout>
                             <Label Text="{Binding Name}" Style="{DynamicResource SubtitleStyle}"></Label>
                             <Label Text="{Binding CreationTime.LocalDateTime, StringFormat='{0:f}'}" Style="{DynamicResource CaptionStyle}"></Label>

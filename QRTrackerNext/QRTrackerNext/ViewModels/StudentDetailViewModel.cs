@@ -34,19 +34,6 @@ namespace QRTrackerNext.ViewModels
             get => QRHelper.GetStudentUriShort(Student);
         }
 
-        HomeworkType selectedType = null;
-        public HomeworkType SelectedType
-        {
-            get => selectedType;
-            set
-            {
-                if (value != null && value != selectedType)
-                {
-                    SetProperty(ref selectedType, value);
-                    UpdateStatusAndChart(value);
-                }
-            }
-        }
         public IList<string> HomeworkTypeNames { get; }
 
         int selectedTypeIndex = -1;
@@ -58,29 +45,32 @@ namespace QRTrackerNext.ViewModels
                 SetProperty(ref selectedTypeIndex, value);
                 if (value != -1)
                 {
-                    SelectedType = realm.All<HomeworkType>().Where(i => i.Name == HomeworkTypeNames[value]).FirstOrDefault();
+                    SelectedStatus = typeToStatus[value];
+                    ChartEntries = ChartUtils.GetHomeworkStatusPieChartEntries(SelectedStatus.AsQueryable(), typeToStatus[value].Key);
                 }
             }
         }
 
-        ICollection<HomeworkStatus> selectedStatus = null;
-        public ICollection<HomeworkStatus> SelectedStatus
+        IEnumerable<HomeworkStatus> selectedStatus = null;
+        public IEnumerable<HomeworkStatus> SelectedStatus
         {
             get => selectedStatus;
             set => SetProperty(ref selectedStatus, value);
         }
 
-        Chart chart = null;
-        public Chart Chart
+        IEnumerable<ChartEntry> chartEntries = null;
+        public IEnumerable<ChartEntry> ChartEntries
         {
-            get => chart;
-            set => SetProperty(ref chart, value);
+            get => chartEntries;
+            set {
+                SetProperty(ref chartEntries, value);
+                UpdateChart?.Invoke();
+            }
         }
 
-        void UpdateStatusAndChart(HomeworkType type)
-        {
-            //selectedStatus = Student.Homeworks.Where(i => i.Homework)
-        }
+        IList<IGrouping<HomeworkType, HomeworkStatus>> typeToStatus;
+
+        public Action UpdateChart { get; set; } 
 
         public Command RenameStudentCommand { get; }
         public Command RemoveStudentCommand { get; }
@@ -89,7 +79,8 @@ namespace QRTrackerNext.ViewModels
         {
             realm = Services.RealmManager.OpenDefault();
             Student = realm.Find<Student>(ObjectId.Parse(studentId));
-            HomeworkTypeNames = realm.All<HomeworkType>().ToList().Select(x => x.Name).ToList();
+            typeToStatus = Student.Homeworks.ToList().GroupBy(i => i.Homework.Type).ToList();
+            HomeworkTypeNames = typeToStatus.Select(i => i.Key.Name).ToList();
 
             RenameStudentCommand = new Command(async () =>
             {
