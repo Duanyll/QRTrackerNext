@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <Authors>Duanyll</Authors>
     <Product>QRTracker</Product>
     <PackageProjectUrl>https://qrt.duanyll.com</PackageProjectUrl>
