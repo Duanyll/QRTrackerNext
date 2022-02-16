@@ -87,16 +87,19 @@ namespace QRTrackerNext.ViewModels
             GeneratePicCommand = new Command(async () =>
             {
                 IsBusy = true;
-                await Task.Run(() =>
+                using (UserDialogs.Instance.Loading("正在生成二维码"))
                 {
-                    bitmaps = UsePDF417 ?
-                        QRHelper.GetClassPDF417CodePic(group.Students.ToList(), WidthCount, HeightCount)
-                        : QRHelper.GetClassQrCodePic(group.Students.ToList(), WidthCount, HeightCount);
-                });
-                Images.Clear();
-                foreach (var i in bitmaps)
-                {
-                    Images.Add(ImageSource.FromStream(() => i.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream()));
+                    await Task.Run(() =>
+                    {
+                        bitmaps = UsePDF417 ?
+                            QRHelper.GetClassPDF417CodePic(group.Students.ToList(), WidthCount, HeightCount)
+                            : QRHelper.GetClassQrCodePic(group.Students.ToList(), WidthCount, HeightCount);
+                    });
+                    Images.Clear();
+                    foreach (var i in bitmaps)
+                    {
+                        Images.Add(ImageSource.FromStream(() => i.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).AsStream()));
+                    }
                 }
                 IsBusy = false;
             }, () => !IsBusy);

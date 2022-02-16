@@ -20,7 +20,6 @@ namespace QRTrackerNext.ViewModels
         private bool useStatsDateBegin = Preferences.Get("use_stats_date_begin", false);
         private DateTime statsDateBegin = Preferences.Get("stats_date_begin", DateTime.Today - TimeSpan.FromDays(90));
         private bool useStatsDateEnd = Preferences.Get("use_stats_date_end", false);
-
         private DateTime statsDateEnd = Preferences.Get("stats_date_end", DateTime.Today);
         public bool UseStatsDateBegin
         {

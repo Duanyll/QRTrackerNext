@@ -170,44 +170,49 @@ namespace QRTrackerNext.Models
 
         public static string ExportStatsCSV(ObjectId groupId, ObjectId[] homeworksId)
         {
-            var colorNames = new Dictionary<string, string>()
-            {
-                { "red", "红" },
-                { "yellow", "黄" },
-                { "green", "绿" },
-                { "blue", "蓝" },
-                { "purple", "紫" },
-                { "gray", "√" }
-            };
-
             var realm = Services.RealmManager.OpenDefault();
             var group = realm.Find<Group>(groupId);
             var homeworks = homeworksId.Select(i => realm.Find<Homework>(i)).ToArray();
             var stateMap = homeworks.Select(cur =>
             {
                 var map = new Dictionary<ObjectId, string>();
+
+                var type = cur.Type;
+                var colorNames = new Dictionary<string, string>()
+                    {
+                        { "red", "红" },
+                        { "yellow", "黄" },
+                        { "green", "绿" },
+                        { "blue", "蓝" },
+                        { "purple", "紫" },
+                        { "gray", "√" }
+                    };
+                string notChecked = type.NotCheckedDescription ?? "";
+                if (!string.IsNullOrEmpty(type.NoColorDescription))
+                {
+                    colorNames["gray"] = type.NoColorDescription;
+                }
+                foreach (var pair in type.ColorDescriptions)
+                {
+                    if (!string.IsNullOrEmpty(pair.Value))
+                    {
+                        colorNames[pair.Key] = pair.Value;
+                    }
+                }
                 foreach (var i in cur.Status)
                 {
-                    var type = cur.Type;
                     string text;
                     if (!i.HasScanned)
                     {
-                        text = type.NotCheckedDescription ?? "";
+                        text = notChecked;
                     }
-                    else if (type.Colors.Count == 0)
+                    else if (type.Colors.Count == 0 || i.Color == "gray")
                     {
-                        text = "√";
-                    }
-                    else if (i.Color == "gray")
-                    {
-                        text = string.IsNullOrEmpty(type.NoColorDescription) ? "√" : type.NoColorDescription;
+                        text = colorNames["gray"];
                     }
                     else
                     {
-                        if (!type.ColorDescriptions.TryGetValue(i.Color, out text) || string.IsNullOrEmpty(text))
-                        {
-                            text = colorNames[i.Color];
-                        }
+                        text = colorNames[i.Color];
                     }
                     map.Add(i.Student.Id, text);
                 }

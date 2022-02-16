@@ -7,7 +7,7 @@
              xmlns:model="clr-namespace:QRTrackerNext.Models"
              x:DataType="local:SettingsViewModel">
     <ContentPage.Content>
-        <TableView>
+        <TableView Intent="Settings">
             <TableView.Root>
                 <TableSection Title="学期设置">
                     <SwitchCell Text="设置学期起始日期" On="{Binding UseStatsDateBegin}"></SwitchCell>

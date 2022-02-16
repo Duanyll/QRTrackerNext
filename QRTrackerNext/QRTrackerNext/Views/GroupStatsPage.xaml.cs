@@ -14,7 +14,7 @@ namespace QRTrackerNext.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     [QueryProperty(nameof(GroupId), "groupId")]
-    public partial class GroupStatsPage : ContentPage
+    public partial class GroupStatsPage : TabbedPage
     {
         public string GroupId
         {
@@ -32,7 +32,11 @@ namespace QRTrackerNext.Views
 
         private void SwitchCell_OnChanged(object sender, ToggledEventArgs e)
         {
-            viewModel?.ExportCSVCommand.ChangeCanExecute();
+        }
+
+        private void homeworkListPage_Appearing(object sender, EventArgs e)
+        {
+            viewModel.ResetFilterOptions();
         }
     }
 }

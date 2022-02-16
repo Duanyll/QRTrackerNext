@@ -1,24 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QRTrackerNext.Views.GroupStatsPage"
-             Title="选择作业"
+             Title="导出作业情况"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
              x:DataType="local:GroupStatsViewModel">
-    <ContentPage.ToolbarItems>
+    <TabbedPage.ToolbarItems>
         <ToolbarItem Text="导出CSV" Command="{Binding ExportCSVCommand}"></ToolbarItem>
-        <ToolbarItem Text="全选" Order="Secondary" Command="{Binding SelectAllCommand}"></ToolbarItem>
-        <ToolbarItem Text="全不选" Order="Secondary" Command="{Binding SelectNoneCommand}"></ToolbarItem>
-        <ToolbarItem Text="选择本学期" Order="Secondary" Command="{Binding SelectDefaultTimeRange}"></ToolbarItem>
-    </ContentPage.ToolbarItems>
-    <ContentPage.Content>
-        <ListView ItemsSource="{Binding Homeworks}" SelectionMode="None" RowHeight="45" VerticalScrollBarVisibility="Never">
+    </TabbedPage.ToolbarItems>
+    <ContentPage Title="筛选作业">
+        <TableView HasUnevenRows="True" VerticalOptions="FillAndExpand" Intent="Form">
+            <TableView.Root>
+                <TableRoot>
+                    <TableSection Title="按时间段筛选">
+                        <SwitchCell Text="设置起始日期" On="{Binding UseStatsDateBegin}"></SwitchCell>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <ContentView Padding="15, 0">
+                                    <DatePicker IsEnabled="{Binding UseStatsDateBegin}" Date="{Binding StatsDateBegin}" MaximumDate="{Binding StatsDateEnd}"></DatePicker>
+                                </ContentView>
+                            </ViewCell.View>
+                        </ViewCell>
+                        <SwitchCell Text="设置截止日期" On="{Binding UseStatsDateEnd}"></SwitchCell>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <ContentView Padding="15, 0">
+                                    <DatePicker IsEnabled="{Binding UseStatsDateEnd}" Date="{Binding StatsDateEnd}" MinimumDate="{Binding StatsDateBegin}"></DatePicker>
+                                </ContentView>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="按分类筛选">
+                        <ViewCell>
+                            <ListView ItemsSource="{Binding HomeworkTypes}" SelectionMode="None" RowHeight="45" VerticalScrollBarVisibility="Never">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="local:SelectableHomeworkType">
+                                        <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}"></SwitchCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView.Root>
+        </TableView>
+    </ContentPage>
+    <ContentPage Title="选择作业" x:Name="homeworkListPage" Appearing="homeworkListPage_Appearing">
+        <ListView ItemsSource="{Binding FilteredHomeworks}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:SelectableHomework">
-                    <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}" OnChanged="SwitchCell_OnChanged"></SwitchCell>
+                    <SwitchCell Text="{Binding Data.Name}" On="{Binding Selected}"></SwitchCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </ContentPage.Content>
-</ContentPage>
+    </ContentPage>
+</TabbedPage>
