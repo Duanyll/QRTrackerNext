@@ -62,8 +62,8 @@ namespace QRTrackerNext.ViewModels
         public Command<Student> SubmitStudentCommand { get; }
         public Command<HomeworkStatus> EditScanLogCommand { get; }
         public Command EditHomeworkTypeCommand { get; }
-
         public Command ChangeHomeworkTypeCommand { get; }
+        public Command CheckAllCommand { get; }
 
         public HomeworkDetailViewModel(string homeworkId)
         {
@@ -228,6 +228,34 @@ namespace QRTrackerNext.ViewModels
                 {
                     realm.Write(() => homework.Type = type);
                     colors = type.Colors.ToList();
+                }
+            });
+
+            CheckAllCommand = new Command(async () =>
+            {
+                if (NotSubmittedStatus.Count() > 0)
+                {
+                    var res = await UserDialogs.Instance.ActionSheetAsync("登记剩余未登记的学生", "取消", "不标记颜色", null,
+                        colors.Select(i => LabelUtils.NameToChineseDisplay(i, homework.Type)).ToArray());
+                    if (res != "取消")
+                    {
+                        if (await UserDialogs.Instance.ConfirmAsync($"确定要把剩余 {NotSubmittedStatus.Count()} 名学生都登记为 {res} 吗？", "操作确认"))
+                        {
+                            var colorName = (res == "不标记颜色") ? "gray" : LabelUtils.ChineseDisplayToName(res);
+                            realm.Write(() =>
+                            {
+                                foreach (var status in NotSubmittedStatus)
+                                {
+                                    status.HasScanned = true;
+                                    status.Color = colorName;
+                                }
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    await UserDialogs.Instance.AlertAsync("所有学生都登记过了", "提示");
                 }
             });
         }

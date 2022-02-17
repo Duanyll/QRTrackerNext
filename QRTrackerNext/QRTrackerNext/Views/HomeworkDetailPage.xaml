@@ -62,6 +62,7 @@
                 <TableSection Title="操作">
                     <TextCell Text="开始二维码登记" Command="{Binding GoScanCommand}"></TextCell>
                     <TextCell Text="搜索学生" Command="{Binding SearchStudentCommand}"></TextCell>
+                    <TextCell Text="登记剩余学生" Command="{Binding CheckAllCommand}"></TextCell>
                 </TableSection>
             </TableView.Root>
         </TableView>
