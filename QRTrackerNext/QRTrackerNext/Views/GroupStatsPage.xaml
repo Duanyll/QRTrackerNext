@@ -9,10 +9,15 @@
     <TabbedPage.ToolbarItems>
         <ToolbarItem Text="导出CSV" Command="{Binding ExportCSVCommand}"></ToolbarItem>
     </TabbedPage.ToolbarItems>
-    <ContentPage Title="筛选作业">
+    <ContentPage Title="筛选和选项">
         <TableView HasUnevenRows="True" VerticalOptions="FillAndExpand" Intent="Form">
             <TableView.Root>
                 <TableRoot>
+                    <TableSection Title="导出选项">
+                        <SwitchCell Text="包括学号" On="{Binding UseStudentNumber}"></SwitchCell>
+                        <TextCell TextColor="Black" Text="启用下方选项可解决 Excel 显示乱码"></TextCell>
+                        <SwitchCell Text="使用 UTF-8 BOM" On="{Binding UseUTF8Bom}"></SwitchCell>
+                    </TableSection>
                     <TableSection Title="按时间段筛选">
                         <SwitchCell Text="设置起始日期" On="{Binding UseStatsDateBegin}"></SwitchCell>
                         <ViewCell>

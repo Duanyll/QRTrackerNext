@@ -168,7 +168,7 @@ namespace QRTrackerNext.Models
             return res;
         }
 
-        public static string ExportStatsCSV(ObjectId groupId, ObjectId[] homeworksId)
+        public static string ExportStatsCSV(ObjectId groupId, ObjectId[] homeworksId, bool useStudentNumber = false)
         {
             var realm = Services.RealmManager.OpenDefault();
             var group = realm.Find<Group>(groupId);
@@ -220,6 +220,7 @@ namespace QRTrackerNext.Models
             });
 
             var res = new StringBuilder("姓名,");
+            if (useStudentNumber) res.Append("学号,");
             foreach (var i in homeworks)
             {
                 res.Append(i.Name);
@@ -230,6 +231,11 @@ namespace QRTrackerNext.Models
             {
                 res.Append(i.Name);
                 res.Append(',');
+                if (useStudentNumber)
+                {
+                    res.Append(i.StudentNumber ?? "");
+                    res.Append(',');
+                }
                 foreach (var map in stateMap)
                 {
                     if (map.TryGetValue(i.Id, out var state))

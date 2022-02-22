@@ -31,10 +31,10 @@ namespace QRTrackerNext.ViewModels
 
     class GroupStatsViewModel : BaseViewModel
     {
-        private bool useStatsDateBegin = Preferences.Get("use_stats_date_begin", false);
-        private DateTime statsDateBegin = Preferences.Get("stats_date_begin", DateTime.Today - TimeSpan.FromDays(90));
-        private bool useStatsDateEnd = Preferences.Get("use_stats_date_end", false);
-        private DateTime statsDateEnd = Preferences.Get("stats_date_end", DateTime.Today);
+        private bool useStatsDateBegin = Settings.Instance.UseStatsDateBegin;
+        private DateTime statsDateBegin = Settings.Instance.StatsDateBegin;
+        private bool useStatsDateEnd = Settings.Instance.UseStatsDateEnd;
+        private DateTime statsDateEnd = Settings.Instance.StatsDateEnd;
         public bool UseStatsDateBegin
         {
             get => useStatsDateBegin;
@@ -75,6 +75,20 @@ namespace QRTrackerNext.ViewModels
                 SetProperty(ref statsDateEnd, value);
                 hasFilterOptionChanged = true;
             }
+        }
+
+        bool useStudentNumber = false;
+        public bool UseStudentNumber
+        {
+            get => useStudentNumber;
+            set => SetProperty(ref useStudentNumber, value);
+        }
+
+        bool useUTF8Bom = true;
+        public bool UseUTF8Bom
+        {
+            get => useUTF8Bom;
+            set => SetProperty(ref useUTF8Bom, value);
         }
 
         Dictionary<HomeworkType, List<Homework>> typeToHomework;
@@ -158,9 +172,9 @@ namespace QRTrackerNext.ViewModels
                         {
                             await Task.Run(() =>
                             {
-                                var csv = QRHelper.ExportStatsCSV(ObjectId.Parse(groupId), homeworkIds);
+                                var csv = QRHelper.ExportStatsCSV(ObjectId.Parse(groupId), homeworkIds, UseStudentNumber);
                                 var store = DependencyService.Get<IMediaStore>();
-                                var path = store.SaveCSV(csv, $"{groupName}-{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.csv");
+                                var path = store.SaveCSV(csv, $"{groupName}-{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.csv", useUTF8Bom);
                             });
                         }
                         UserDialogs.Instance.Toast("已保存到 /sdcard/Documents/QRTracker", new TimeSpan(0, 0, 5));

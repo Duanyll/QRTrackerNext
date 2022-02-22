@@ -34,6 +34,33 @@ namespace QRTrackerNext.ViewModels
             get => QRHelper.GetStudentUriShort(Student);
         }
 
+        public string Name
+        {
+            get => Student.Name;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value) || value.Contains(',') || value.Contains(';'))
+                {
+                    return;
+                }
+                else
+                {
+                    realm.Write(() => Student.Name = value.Trim());
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string StudentNumber
+        {
+            get => Student.StudentNumber;
+            set
+            {
+                realm.Write(() => Student.StudentNumber = value.Trim());
+                OnPropertyChanged();
+            }
+        }
+
         public IList<string> HomeworkTypeNames { get; }
 
         int selectedTypeIndex = -1;
@@ -62,7 +89,8 @@ namespace QRTrackerNext.ViewModels
         public IEnumerable<ChartEntry> ChartEntries
         {
             get => chartEntries;
-            set {
+            set
+            {
                 SetProperty(ref chartEntries, value);
                 UpdateChart?.Invoke();
             }
@@ -70,9 +98,8 @@ namespace QRTrackerNext.ViewModels
 
         IList<IGrouping<HomeworkType, HomeworkStatus>> typeToStatus;
 
-        public Action UpdateChart { get; set; } 
+        public Action UpdateChart { get; set; }
 
-        public Command RenameStudentCommand { get; }
         public Command RemoveStudentCommand { get; }
 
         public StudentDetailViewModel(string studentId)
@@ -81,23 +108,6 @@ namespace QRTrackerNext.ViewModels
             Student = realm.Find<Student>(ObjectId.Parse(studentId));
             typeToStatus = Student.Homeworks.ToList().GroupBy(i => i.Homework.Type).ToList();
             HomeworkTypeNames = typeToStatus.Select(i => i.Key.Name).ToList();
-
-            RenameStudentCommand = new Command(async () =>
-            {
-                var result = await UserDialogs.Instance.PromptAsync($"将 {Student.Name} 重命名为", "重命名学生");
-                if (result.Ok && !string.IsNullOrWhiteSpace(result.Text))
-                {
-                    if (string.IsNullOrWhiteSpace(result.Text) || result.Text.Contains(',') || result.Text.Contains(';'))
-                    {
-                        await UserDialogs.Instance.AlertAsync("请输入有效的名称, 不能包含逗号或分号", "错误");
-                        return;
-                    }
-                    realm.Write(() =>
-                    {
-                        Student.Name = result.Text.Trim();
-                    });
-                }
-            });
 
             RemoveStudentCommand = new Command(async () =>
             {

@@ -7,6 +7,6 @@ namespace QRTrackerNext.Services
     public interface IMediaStore
     {
         void SaveImageFromStream(System.IO.Stream imageStream, string fileName);
-        string SaveCSV(string csv, string fileName);
+        string SaveCSV(string csv, string fileName, bool useBOM);
     }
 }
