@@ -81,7 +81,6 @@ namespace QRTrackerNext.ViewModels
                         var student = new Student()
                         {
                             Name = result.Text.Trim(),
-                            NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim()),
                             Group = group,
                         };
                         realm.Add(student);
@@ -150,7 +149,6 @@ namespace QRTrackerNext.ViewModels
                                     realm.Add(new Student()
                                     {
                                         Name = name,
-                                        NamePinyin = PinyinHelper.GetPinyin(name),
                                         Group = group
                                     });
                                 }
@@ -160,7 +158,6 @@ namespace QRTrackerNext.ViewModels
                                     {
                                         Id = id,
                                         Name = name,
-                                        NamePinyin = PinyinHelper.GetPinyin(name),
                                         Group = group
                                     });
                                 }

@@ -7,25 +7,32 @@
              xmlns:model="clr-namespace:QRTrackerNext.Models"
              x:DataType="local:SettingsViewModel">
     <ContentPage.Content>
-        <TableView Intent="Settings">
+        <TableView Intent="Settings" HasUnevenRows="True">
             <TableView.Root>
-                <TableSection Title="学期设置">
-                    <SwitchCell Text="设置学期起始日期" On="{Binding UseStatsDateBegin}"></SwitchCell>
+                <TableSection Title="学期">
+                    <SwitchCell Text="设置学期起始日期" On="{Binding Settings.UseStatsDateBegin}"></SwitchCell>
                     <ViewCell>
                         <ViewCell.View>
                             <ContentView Padding="15, 0">
-                                <DatePicker IsEnabled="{Binding UseStatsDateBegin}" Date="{Binding StatsDateBegin}" MaximumDate="{Binding StatsDateEnd}"></DatePicker>
+                                <DatePicker IsEnabled="{Binding Settings.UseStatsDateBegin}" 
+                                            Date="{Binding Settings.StatsDateBegin}" 
+                                            MaximumDate="{Binding Settings.StatsDateEnd}"></DatePicker>
                             </ContentView>
                         </ViewCell.View>
                     </ViewCell>
-                    <SwitchCell Text="设置学期截止日期" On="{Binding UseStatsDateEnd}"></SwitchCell>
+                    <SwitchCell Text="设置学期截止日期" On="{Binding Settings.UseStatsDateEnd}"></SwitchCell>
                     <ViewCell>
                         <ViewCell.View>
                             <ContentView Padding="15, 0">
-                                <DatePicker IsEnabled="{Binding UseStatsDateEnd}" Date="{Binding StatsDateEnd}" MinimumDate="{Binding StatsDateBegin}"></DatePicker>
+                                <DatePicker IsEnabled="{Binding Settings.UseStatsDateEnd}" 
+                                            Date="{Binding Settings.StatsDateEnd}" 
+                                            MinimumDate="{Binding Settings.StatsDateBegin}"></DatePicker>
                             </ContentView>
                         </ViewCell.View>
                     </ViewCell>
+                </TableSection>
+                <TableSection Title="显示">
+                    
                 </TableSection>
             </TableView.Root>
         </TableView>

@@ -8,6 +8,7 @@
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
              x:DataType="local:StudentDetailViewModel"
+             Shell.TabBarIsVisible="False"
              xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
              xmlns:charts="clr-namespace:Microcharts;assembly=Microcharts">
     <TabbedPage.ToolbarItems>

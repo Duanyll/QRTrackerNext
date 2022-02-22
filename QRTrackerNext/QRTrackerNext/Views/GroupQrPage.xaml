@@ -5,6 +5,7 @@
              Title="班级二维码生成"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
+             Shell.TabBarIsVisible="False"
              x:DataType="local:GroupQrViewModel">
     <RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" IsEnabled="False">
         <StackLayout Padding="10">

@@ -5,6 +5,7 @@
              Title="{Binding Title}"
              xmlns:local="clr-namespace:QRTrackerNext.ViewModels"
              xmlns:model="clr-namespace:QRTrackerNext.Models"
+             Shell.TabBarIsVisible="False"
              x:DataType="local:NewHomeworkViewModel">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="创建" Command="{Binding CreateNewHomeworkCommand}"></ToolbarItem>

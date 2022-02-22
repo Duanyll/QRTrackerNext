@@ -35,11 +35,11 @@ namespace QRTrackerNext.Services
             if (oldSchemaVersion < 1)
             {
                 // Process Pinyin
-                foreach (var student in migration.NewRealm.All<Student>())
+                foreach (var student in migration.NewRealm.DynamicApi.All("Studnet"))
                 {
                     student.NamePinyin = PinyinHelper.GetPinyin(student.Name);
                 }
-                foreach (var group in migration.NewRealm.All<Group>())
+                foreach (var group in migration.NewRealm.DynamicApi.All("Group"))
                 {
                     group.NamePinyin = PinyinHelper.GetPinyin(group.Name);
                 }
@@ -104,7 +104,7 @@ namespace QRTrackerNext.Services
         {
             return Realm.GetInstance(new RealmConfiguration()
             {
-                SchemaVersion = 1,
+                SchemaVersion = 2,
                 MigrationCallback = RealmMigrationCallback
             });
         }

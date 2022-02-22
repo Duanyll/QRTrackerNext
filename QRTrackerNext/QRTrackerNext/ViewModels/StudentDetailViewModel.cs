@@ -95,7 +95,6 @@ namespace QRTrackerNext.ViewModels
                     realm.Write(() =>
                     {
                         Student.Name = result.Text.Trim();
-                        Student.NamePinyin = PinyinHelper.GetPinyin(result.Text.Trim());
                     });
                 }
             });

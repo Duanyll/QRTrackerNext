@@ -9,6 +9,7 @@
             Appearing="TabbedPage_Appearing"
             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
             xmlns:charts="clr-namespace:Microcharts;assembly=Microcharts" 
+            Shell.TabBarIsVisible="False"
             x:Name="homeworkDetailPage">
     <!--Pages can be added as references or inline-->
     <ContentPage Title="总览">

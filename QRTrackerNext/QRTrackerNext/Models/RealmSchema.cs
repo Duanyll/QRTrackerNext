@@ -5,6 +5,7 @@ using System.Text;
 using Realms;
 using MongoDB.Bson;
 using System.Linq;
+using TinyPinyin.Core;
 
 namespace QRTrackerNext.Models
 {
@@ -14,10 +15,25 @@ namespace QRTrackerNext.Models
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
         [Indexed]
-        public string Name { get; set; }
+        [MapTo("Name")]
+        private string name { get; set; }
 
         [Indexed]
-        public string NamePinyin { get; set; }
+        [MapTo("NamePinyin")]
+        private string namePinyin { get; set; }
+
+        public string Name
+        {
+            get => name;
+            set {
+                name = value;
+                namePinyin = PinyinHelper.GetPinyin(name);
+            }
+        }
+
+        public string NamePinyin { get => namePinyin; }
+
+        public string StudentNumber { get; set; }
 
         public Group Group { get; set; }
 
@@ -32,10 +48,24 @@ namespace QRTrackerNext.Models
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
         [Indexed]
-        public string Name { get; set; }
+        [MapTo("Name")]
+        private string name { get; set; }
 
         [Indexed]
-        public string NamePinyin { get; set; }
+        [MapTo("NamePinyin")]
+        private string namePinyin { get; set; }
+
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                namePinyin = PinyinHelper.GetPinyin(name);
+            }
+        }
+
+        public string NamePinyin { get => namePinyin; }
 
         [Backlink(nameof(Student.Group))]
         public IQueryable<Student> Students { get; }
